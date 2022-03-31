@@ -1,0 +1,1062 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    
+
+        <script src="../js/witmis_jquery.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            var tableView = null;
+            function pageLoad(sender, args) {
+                try {
+                    tableView = $find("RadGrid1").get_masterTableView();
+                }
+                catch (e) {
+                }
+            }
+            function RadComboBox1_SelectedIndexChanged(sender, args) {
+                tableView.set_pageSize(sender.get_value());
+            }
+            function changePage(argument) {
+                tableView.page(argument);
+            }
+
+            function RadNumericTextBox1_ValueChanged(sender, args) {
+                tableView.page(sender.get_value());
+            }
+            var ID = "";
+            function rowSelected(sender, args) {
+                ID = ID + args.getDataKeyValue("ID") + ",";
+            }
+            function rowdeSelected(sender, args) {
+                ID = ID.replace(args.getDataKeyValue("ID") + ",", "");
+            }
+            function ItemShenCha(sender, args) {
+                if (ID.replace(/[^,]/g, '').length < 1) {
+                    alert("没有选择行!");
+                    return false;
+                }
+                else {
+                    var p = tableView.get_currentPageIndex();
+                    if (ID.replace(/[^,]/g, '').length >= 1) {
+                        var str1 = ID.substring(0, ID.length - 1);
+                        str1 = str1.substr(str1.lastIndexOf(',') + 1);
+                        $("#hid_value").val(str1);
+                        //window.location.href = "WitMis_DBLenWenSCManageAdd.aspx?MID=" + str1 + "&Action=ShenCha&p=" + p;
+                    }
+                }
+            }
+            function ItemTH() {
+                if (ID.replace(/[^,]/g, '').length < 1) {
+                    alert("没有选择行!");
+                    return false;
+                }
+                else {
+                    var p = tableView.get_currentPageIndex();
+                    if (ID.replace(/[^,]/g, '').length >= 1) {
+                        var str1 = ID.substring(0, ID.length - 1);
+                        str1 = str1.substr(str1.lastIndexOf(',') + 1);
+                        var name;
+                        name = prompt("请填写退回原因");
+                        if (name != null) {
+                            $("#hid_mark").val(name);
+                            $("#hid_value").val(str1);
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            function ItemSC(button, args) {
+                var msg = "";
+                var xy = $("#ddl_college option:selected").val();
+                if (ID.replace(/[^,]/g, '').length >= 1) {
+                    var varUserid = ID.substring(0, ID.length - 1);
+                    $("#hid_value").val(varUserid.replace(/'/g, ""));
+                    msg = "您要将勾选的数据进行审查通过吗？";
+                } else {
+                    if (xy == "") {
+                        msg = "您要将查询到的数据批量审查通过吗？";
+                    } else {
+                        msg = "您要将" + xy + "查询到的数据批量审查通过吗？";
+                    }
+                }
+                if (confirm(msg)) {
+                    $("#hidval").val("1");
+                    return true;
+                }
+                else {
+                    $("#hidval").val("");
+                    button.attr("click", "");
+                    return false;
+                }
+            }
+            function ItemTH(button, args) {
+                var yxmc = $("#ddl_college option:selected").val();
+                var yxmcs = $("#ddl_college option:selected").text();
+                if (yxmc == "") {
+                    alert("请选择退回的学院");
+                    button.attr("click", "");
+                    return false;
+                }
+                if (confirm("您要退回" + yxmcs + "学位论文吗?")) {
+                    return true;
+                } else {
+                    button.attr("click", "");
+                    return false;
+                }
+            }
+            function SC() {
+                if (ID.replace(/[^,]/g, '').length < 1) {
+                    alert("没有选择行!");
+                    return false;
+                }
+                else {
+                    var p = tableView.get_currentPageIndex();
+                    if (ID.replace(/[^,]/g, '').length >= 1) {
+                        var str1 = ID.substring(0, ID.length - 1);
+                        $("#hid_value").val(str1);
+                        return false;
+                    }
+                }
+            }
+        </script>
+
+    
+</head>
+<body>
+    <form name="form1" method="post" action="./WitMis_LWDGManage.aspx" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJODk5NDQ4MjM5D2QWAgIED2QWGAIBD2QWAmYPDxYCHgRUZXh0ZWRkAgMPFgIeBFNraW4FCk9mZmljZTIwMDcWAmYPFCsAAg8WBB4TY2FjaGVkU2VsZWN0ZWRWYWx1ZWQeB1Zpc2libGVoZBAWFGYCAQICAgMCBAIFAgYCBwIIAgkCCgILAgwCDQIOAg8CEAIRAhICExYUFCsAAg8WBh8ABQVCbGFjax4FVmFsdWUFBUJsYWNrHghTZWxlY3RlZGhkZBQrAAIPFgYfAAUPQmxhY2tNZXRyb1RvdWNoHwQFD0JsYWNrTWV0cm9Ub3VjaB8FaGRkFCsAAg8WBh8ABQlCb290c3RyYXAfBAUJQm9vdHN0cmFwHwVoZGQUKwACDxYGHwAFB0RlZmF1bHQfBAUHRGVmYXVsdB8FaGRkFCsAAg8WBh8ABQRHbG93HwQFBEdsb3cfBWhkZBQrAAIPFgYfAAUFTWV0cm8fBAUFTWV0cm8fBWhkZBQrAAIPFgYfAAUKTWV0cm9Ub3VjaB8EBQpNZXRyb1RvdWNoHwVoZGQUKwACDxYGHwAFCk9mZmljZTIwMDcfBAUKT2ZmaWNlMjAwNx8FZ2RkFCsAAg8WBh8ABQ9PZmZpY2UyMDEwQmxhY2sfBAUPT2ZmaWNlMjAxMEJsYWNrHwVoZGQUKwACDxYGHwAFDk9mZmljZTIwMTBCbHVlHwQFDk9mZmljZTIwMTBCbHVlHwVoZGQUKwACDxYGHwAFEE9mZmljZTIwMTBTaWx2ZXIfBAUQT2ZmaWNlMjAxMFNpbHZlch8FaGRkFCsAAg8WBh8ABQdPdXRsb29rHwQFB091dGxvb2sfBWhkZBQrAAIPFgYfAAUEU2lsax8EBQRTaWxrHwVoZGQUKwACDxYGHwAFBlNpbXBsZR8EBQZTaW1wbGUfBWhkZBQrAAIPFgYfAAUGU3Vuc2V0HwQFBlN1bnNldB8FaGRkFCsAAg8WBh8ABQdUZWxlcmlrHwQFB1RlbGVyaWsfBWhkZBQrAAIPFgYfAAUFVmlzdGEfBAUFVmlzdGEfBWhkZBQrAAIPFgYfAAUFV2ViMjAfBAUFV2ViMjAfBWhkZBQrAAIPFgYfAAUHV2ViQmx1ZR8EBQdXZWJCbHVlHwVoZGQUKwACDxYGHwAFCFdpbmRvd3M3HwQFCFdpbmRvd3M3HwVoZGQPFhRmZmZmZmZmZmZmZmZmZmZmZmZmZhYBBXdUZWxlcmlrLldlYi5VSS5SYWRDb21ib0JveEl0ZW0sIFRlbGVyaWsuV2ViLlVJLCBWZXJzaW9uPTIwMTUuMi42MjMuNDUsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49MTIxZmFlNzgxNjViYTNkNBYsZg8PFgQeCENzc0NsYXNzBQlyY2JIZWFkZXIeBF8hU0ICAmRkAgEPDxYEHwYFCXJjYkZvb3Rlch8HAgJkZAICDw8WBh8ABQVCbGFjax8EBQVCbGFjax8FaGRkAgMPDxYGHwAFD0JsYWNrTWV0cm9Ub3VjaB8EBQ9CbGFja01ldHJvVG91Y2gfBWhkZAIEDw8WBh8ABQlCb290c3RyYXAfBAUJQm9vdHN0cmFwHwVoZGQCBQ8PFgYfAAUHRGVmYXVsdB8EBQdEZWZhdWx0HwVoZGQCBg8PFgYfAAUER2xvdx8EBQRHbG93HwVoZGQCBw8PFgYfAAUFTWV0cm8fBAUFTWV0cm8fBWhkZAIIDw8WBh8ABQpNZXRyb1RvdWNoHwQFCk1ldHJvVG91Y2gfBWhkZAIJDw8WBh8ABQpPZmZpY2UyMDA3HwQFCk9mZmljZTIwMDcfBWdkZAIKDw8WBh8ABQ9PZmZpY2UyMDEwQmxhY2sfBAUPT2ZmaWNlMjAxMEJsYWNrHwVoZGQCCw8PFgYfAAUOT2ZmaWNlMjAxMEJsdWUfBAUOT2ZmaWNlMjAxMEJsdWUfBWhkZAIMDw8WBh8ABRBPZmZpY2UyMDEwU2lsdmVyHwQFEE9mZmljZTIwMTBTaWx2ZXIfBWhkZAINDw8WBh8ABQdPdXRsb29rHwQFB091dGxvb2sfBWhkZAIODw8WBh8ABQRTaWxrHwQFBFNpbGsfBWhkZAIPDw8WBh8ABQZTaW1wbGUfBAUGU2ltcGxlHwVoZGQCEA8PFgYfAAUGU3Vuc2V0HwQFBlN1bnNldB8FaGRkAhEPDxYGHwAFB1RlbGVyaWsfBAUHVGVsZXJpax8FaGRkAhIPDxYGHwAFBVZpc3RhHwQFBVZpc3RhHwVoZGQCEw8PFgYfAAUFV2ViMjAfBAUFV2ViMjAfBWhkZAIUDw8WBh8ABQdXZWJCbHVlHwQFB1dlYkJsdWUfBWhkZAIVDw8WBh8ABQhXaW5kb3dz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5Luq5ZmoD+S6p+S4mue7j+a1juWtpgzotoXlo7DljLvlraYM6L2m6L6G5bel56iLD+aIkOS6uuaVmeiCsuWtpgblh7rniYgJ5Lyg5pKt5a2mD+S8oOWqkueuoeeQhuWtpgnmoaPmoYjlraYS562J56a75a2Q5L2T54mp55CGGOeUteW3peeQhuiuuuS4juaWsOaKgOacrw/nlLXmnLrkuI7nlLXlmagb55S15Yqb55S15a2Q5LiO55S15Yqb5Lyg5YqoG+eUteWKm+ezu+e7n+WPiuWFtuiHquWKqOWMlgznlLXmsJTlt6XnqIsM55S15rCU5bel56iLDOeUteawlOW3peeoiwznlLXlrZDkv6Hmga8m55S15a2Q5L+h5oGvKOaOp+WItuW3peeoi+S4k+S4muaWueWQkSks55S15a2Q5L+h5oGvKOeUn+eJqeWMu+WtpuW3peeoi+S4k+S4muaWueWQkSkV55S15a2Q5LiO6YCa5L+h5bel56iLDOWKqOWKm+W3peeoiwzliqjlipvlt6XnqIse5Yqo5Yqb5bel56iL5Y+K5bel56iL54Ot54mp55CGFeWKqOWKm+acuuaisOWPiuW3peeoiwnliqjnianlraYS5L+E6K+t6K+t6KiA5paH5a2mCeWEv+enkeWtpgnlhL/np5HlraYJ5YS/56eR5a2mDOWEv+WkluenkeWtphLogLPpvLvlkr3llonnp5HlraYS6ICz6by75ZK95ZaJ56eR5a2mEuiAs+m8u+WSveWWieenkeWtpgzlj5HphbXlt6XnqIsP5Y+R6IKy55Sf54mp5a2mBuazleW+iwbms5XlvosS5rOV5b6L77yI5rOV5a2m77yJFeazleW+i++8iOmdnuazleWtpu+8iQnms5Xlvovlj7IG5rOV5a2mCeazleWMu+Wtpgbnv7vor5Eh6Ziy54G+5YeP54G+5bel56iL5Y+K6Ziy5oqk5bel56iLD+aUvuWwhOW9seWDj+Wtpg/mlL7lsITogr/nmKTlraYM5YiG5p6Q5YyW5a2mDOWmh+S6p+enkeWtpgzlpofkuqfnp5HlraYM5aaH5Lqn56eR5a2mGOamgueOh+iuuuS4juaVsOeQhue7n+iuoQ/pq5jnrYnmlZnogrLlraYY6auY5YiG5a2Q5YyW5a2m5LiO54mp55CGGOmrmOWIhuWtkOenkeWtpuS4juW3peeoiwzlt6XnqIvnrqHnkIYM5bel56iL566h55CGDOW3peeoi+WKm+Wtpg/lt6XnqIvng63niannkIYM5bel5ZWG566h55CGDOW3peWVhueuoeeQhhjlt6XllYbnrqHnkIbvvIjoi7HmlofvvIkS5bel5ZWG566h55CG56GV5aOrDOW3peS4muWCrOWMlgzlt6XkuJrlt6XnqIsV5bel5Lia5bel56iL5LiO566h55CGEuW3peS4muaOp+WItuW3peeoixLlt6XkuJrorr7orqHlt6XnqIsS5bel5Lia6K6+6K6h5bel56iLDOWFrOWFseeuoeeQhgzlhazlhbHljavnlJ8S5YWs5YWx5Y2r55Sf56GV5aOrG+WFrOWFseWNq+eUn+S4jumihOmYsuWMu+WtphvlhazlhbHmlL/nrZbkuI7lhazlhbHnrqHnkIYq5L6b54Ot44CB5L6b54eD5rCU44CB6YCa6aOO5Y+K56m66LCD5bel56iLCemqqOenkeWtpgzlm7rkvZPlipvlraYM5Zu65L2T5Yqb5a2mFeeuoeeQhuenkeWtpuS4juW3peeoixvnrqHnkIbmlbDlrabkuI7lhrPnrZblt6XnqIsS5YWJ55S15L+h5oGv5bel56iLBuWFieWtpgzlhYnlrablt6XnqIsM5bm/5pKt55S16KeGFeW5v+aSreeUteinhuiJuuacr+WtphXlub/mkq3nlLXop4boibrmnK/lraYM5Zu96Ziy57uP5rWODOWbvemZheazleWtpgzlm73pmYXlhbPns7sP5Zu96ZmF6LS45piT5a2mDOWbvemZheWVhuWKoQzlm73pmYXmlL/msrsP5Zu95rCR57uP5rWO5a2mBuWbveWtphLmsYnor63lm73pmYXmlZnogrIS5rGJ6K+t6KiA5paH5a2X5a2mCeaguOWMu+WtpgbmiqTnkIYJ5oqk55CG5a2mCeaKpOeQhuWtpgnmiqTnkIblraYS5YyW5bel6L+H56iL5py65qKwBuWMluWtpgzljJblrablt6XnqIsM5YyW5a2m5bel56iLFeWMluWtpuW3peeoi+S4juaKgOacrwzljJblrablt6XoiboM546v5aKD5bel56iLDOeOr+Wig+W3peeoiwznjq/looPnp5HlraYV546v5aKD56eR5a2m5LiO5bel56iLBuS8muiuoQnkvJrorqHlraYG5py65qKwEuacuuaisOeUteWtkOW3peeoiwzmnLrmorDlt6XnqIsM5py65qKw5bel56iLFeacuuaisOiuvuiuoeWPiueQhuiuuhvmnLrmorDliLbpgKDlj4rlhbboh6rliqjljJYM5Z+656GA5pWw5a2mDOWfuuehgOWMu+WtphvmnoHnq6/mnaHku7bmnZDmlpnkuI7niannkIYM5oCl6K+K5Yy75a2mDOaApeiviuWMu+WtpgzmgKXor4rljLvlraYP6K6h566X5py65oqA5pyvD+iuoeeul+acuuaKgOacrxjorqHnrpfmnLrnp5HlrabkuI7mioDmnK8Y6K6h566X5py66L2v5Lu25LiO55CG6K66GOiuoeeul+acuui9r+S7tuS4jueQhuiuuhXorqHnrpfmnLrns7vnu5/nu5PmnoQV6K6h566X5py65bqU55So5oqA5pyvFeiuoeeul+acuuW6lOeUqOaKgOacrxXorqHnrpfmnLrlupTnlKjmioDmnK8M6K6h566X5pWw5a2mFeaKgOacr+e7j+a1juWPiueuoeeQhh7mo4DmtYvmioDmnK/kuI7oh6rliqjljJboo4Xnva4Y5bu6562R6K6+6K6h5Y+K5YW255CG6K66CeW7uuetkeWtphXlu7rnrZHkuI7lnJ/mnKjlt6XnqIsG5pWZ6IKyDOaVmeiCsueuoeeQhg/mlZnogrLmioDmnK/lraYV5pWZ6IKy57uP5rWO5LiO566h55CGD+aVmeiCsuWtpuWOn+eQhgznu5PmnoTlt6XnqIsG6YeR6J6NCemHkeiejeWtpgznu4/mtY7ms5XlraYJ57uP5rWO5Y+yFeeyvuWvhuS7quWZqOWPiuacuuaisBvnsr7npZ7nl4XkuI7nsr7npZ7ljavnlJ/lraYb57K+56We55eF5LiO57K+56We5Y2r55Sf5a2mG+eyvuelnueXheS4jueyvuelnuWNq+eUn+Wtpgznsr7lh4bljLvlraYY5bq35aSN5Yy75a2m5LiO55CG55aX5a2mGOW6t+WkjeWMu+WtpuS4jueQhueWl+WtphLnp5HlrabmioDmnK/lk7LlraYt56eR5a2m56S+5Lya5Li75LmJ5LiO5Zu96ZmF5YWx5Lqn5Li75LmJ6L+Q5YqoEuivvueoi+S4juaVmeWtpuiuuiHnqbrpl7TnrYnnprvlrZDkvZPniannkIbkuI7mioDmnK8b56m66Ze0546v5aKD56eR5a2m5LiO5oqA5pyvDOaOp+WItuW3peeoixXmjqfliLbnp5HlrabkuI7lt6XnqIsb5o6n5Yi255CG6K665LiO5o6n5Yi25bel56iLEuWPo+iFlOWfuuehgOWMu+WtphLlj6PohZTkuLTluorljLvlraYM5Y+j6IWU5Yy75a2mDOWPo+iFlOWMu+WtphLlj6PohZTljLvlrabnoZXlo6sP5Yqz5Yqo57uP5rWO5a2mHuWKs+WKqOWNq+eUn+S4jueOr+Wig+WNq+eUn+WtpgzogIHlubTljLvlraYM6ICB5bm05Yy75a2mD+eQhuiuuue7j+a1juWtpgznkIborrrniannkIYG5Yqb5a2mEuWOhuWPsumBl+S6p+euoeeQhiTnsq7po5/jgIHmsrnohILlj4rmpI3nianom4vnmb3lt6XnqIsM5Li05bqK55eF55CGD+S4tOW6iueXheeQhuWtph7kuLTluornl4XnkIbkuI7nl4XnkIbnlJ/nkIblraYV5Li05bqK5qOA6aqM6K+K5pat5a2mFeS4tOW6iuajgOmqjOiviuaWreWtphXkuLTluormo4Dpqozor4rmlq3lraYV5Li05bqK5qOA6aqM6K+K5pat5a2mDOS4tOW6iuWMu+WtpgzkuLTluorljLvlraYV5rWB5L2T5py65qKw5Y+K5bel56iLDOa1geS9k+WKm+WtphjmtYHooYznl4XkuI7ljavnlJ/nu5/orqEM5peF5ri4566h55CGDOaXhea4uOeuoeeQhgnkvKbnkIblraYJ6bq76YaJ5a2mCem6u+mGieWtpgnpurvphonlraYY6ams5YWL5oCd5Li75LmJ5Y+R5bGV5Y+yG+mprOWFi+aAneS4u+S5ieWfuuacrOWOn+eQhhXpqazlhYvmgJ3kuLvkuYnnkIborroq6ams5YWL5oCd5Li75LmJ55CG6K665LiO5oCd5oOz5pS/5rK75pWZ6IKyFemprOWFi+aAneS4u+S5ieWTsuWtph7pqazlhYvmgJ3kuLvkuYnkuK3lm73ljJbnoJTnqbYG576O5pyvCee+juacr+Wtpgnnvo7mnK/lraYJ576O5pyv5a2mCeWFjeeWq+WtpgzmsJHllYbms5XlraYJ5YaF56eR5a2mCeWGheenkeWtpgnlhoXnp5HlraYJ5YaF56eR5a2mDOiDvea6kOWKqOWKmw/lh53ogZrmgIHniannkIYe5Yac5Lqn5ZOB5Yqg5bel5Y+K6LSu6JeP5bel56iLD+WGnOS4muS/oeaBr+WMlhXnmq7ogqTnl4XkuI7mgKfnl4XlraYV55qu6IKk55eF5LiO5oCn55eF5a2mDOS8geS4mueuoeeQhhXmoaXmooHkuI7pmqfpgZPlt6XnqIsJ5oOF5oql5a2mD+WMuuWfn+e7j+a1juWtphvljLrln5/kuI7kuqfkuJrnu4/mtY7nrqHnkIYM5YWo56eR5Yy75a2mDOWFqOenkeWMu+WtpiHkurrlj6PjgIHotYTmupDkuI7njq/looPnu4/mtY7lraYe5Lq65L2T6Kej5YmW5LiO57uE57uH6IOa6IOO5a2mD+S6uuaWh+WcsOeQhuWtphLml6Xor63or63oqIDmloflraYM6L2v5Lu25bel56iLDOi9r+S7tuW3peeoiwzova/ku7blt6XnqIsn5bCR5bm05YS/56ul57uE57uH5LiO5oCd5oOz5oSP6K+G5pWZ6IKyJ+WwkeW5tOWEv+erpee7hOe7h+S4juaAneaDs+aEj+ivhuaVmeiCsgnorr7orqHlraYP6K6+6K6h6Im65pyv5a2mDOekvuS8muS/nemanAznpL7kvJrlt6XkvZwh56S+5Lya5Yy75a2m5LiO5Y2r55Sf5LqL5Lia566h55CGIeekvuS8muWMu+WtpuS4juWNq+eUn+S6i+S4mueuoeeQhiHnpL7kvJrmsrvnkIbkuI7ms5Xmsrvns7vnu5/lt6XnqIsM56We57uP55eF5a2mDOelnue7j+eXheWtpgznpZ7nu4/nl4XlraYP56We57uP55Sf54mp5a2mCeeUn+eQhuWtpgnnlJ/mgIHlraYM55Sf54mp5bel56iLDOeUn+eJqeWMluW3pR7nlJ/nianljJblrabkuI7liIblrZDnlJ/nianlraYJ55Sf54mp5a2mEueUn+eJqeWMu+WtpuW3peeoiw/nlJ/niankuI7ljLvoja8S6aOf5ZOB5Y+R6YW15bel56iLDOmjn+WTgeW3peeoixXpo5/lk4HliqDlt6XkuI7lronlhagV6aOf5ZOB5Yqg5bel5LiO5a6J5YWoDOmjn+WTgeenkeWtphXpo5/lk4Hnp5HlrabkuI7lt6XnqIsM5LiW55WM57uP5rWODOW4guaUv+W3peeoiyHluILmlL/lt6XnqIvvvIjlkKvnu5nmjpLmsLTnrYnvvIkP5pWw6YeP57uP5rWO5a2mBuaVsOWtph7msLTkuqflk4HliqDlt6Xlj4rotK7ol4/lt6XnqIsM5rC05Lqn5YW75q6WDOawtOWIqeW3peeoiwzmsLTliKnlt6XnqIsM5rC05Yip5bel56iLEuawtOWIqeawtOeUteW3peeoiw/msLTnlJ/nlJ/nianlraYS5oCd5oOz5pS/5rK75pWZ6IKyDOivieiuvOazleWtphXkvZPogrLkurrmlofnpL7kvJrlraYJ5L2T6IKy5a2mDOWkqeS9k+eJqeeQhjPpgJrkv6Hlt6XnqIvvvIjlkKvlrr3luKbnvZHnu5zjgIHnp7vliqjpgJrkv6HnrYnvvIkV6YCa5L+h5LiO5L+h5oGv57O757ufCee7n+iuoeWtpgzlm77kuabppoblraYM5Zu+5Lmm5oOF5oqlG+WbvuS5puaDheaKpeS4juaho+ahiOeuoeeQhhLlnJ/lnLDotYTmupDnrqHnkIYM5Zyf5pyo5bel56iLDOWcn+acqOW3peeoiwzlnJ/mnKjmsLTliKkh5aSW5Zu96K+t6KiA5a2m5Y+K5bqU55So6K+t6KiA5a2mDOWkluWbveWTsuWtpgnlpJbnp5HlraYJ5aSW56eR5a2mCeWkluenkeWtphLnvZHnu5znqbrpl7TlronlhagV572R57uc5LiO5L+h5oGv5a6J5YWoGOW+ruWwuuW6puenkeWtpuS4juaKgOacrx7lvq7nurPnsbPmnZDmlpnnp5HlrabkuI7lt6XnqIsM5b6u55Sf54mp5a2mD+WNq+eUn+avkueQhuWtphvmlofljJbpgZfkuqfkuI7ml4XmuLjop4TliJIb5paH5YyW6YGX5Lqn5LiO5peF5ri46KeE5YiSG+aWh+WMlui1hOa6kOS4juS6p+S4mueuoeeQhgnmlofoibrlraYM5peg5py65YyW5a2mD+aXoOe6v+eUteeJqeeQhgboiJ7ouYgM54mp55CG5YyW5a2mCeeJqeeQhuWtpgznianmtYHlt6XnqIsP6KW/5pa557uP5rWO5a2mD+e7huiDnueUn+eJqeWtphLnjrDku6PmlZnogrLmioDmnK8Y5a6q5rOV5a2m5LiO6KGM5pS/5rOV5a2mDOmhueebrueuoeeQhgzlsI/lrabmlZnogrIS5b+D55CG5YGl5bq35pWZ6IKyD+aWsOmXu+S8oOaSreWtpgnmlrDpl7vlraYP5paw6Ze75LiO5Lyg5pKtFeS/oeWPt+S4juS/oeaBr+WkhOeQhhvkv6Hmga/nrqHnkIbkuI7kv6Hmga/ns7vnu58V5L+h5oGv5LiO6YCa5L+h5bel56iLCeWIkeazleWtpgzooYzmlL/nrqHnkIYY5a2m56eR5pWZ5a2m77yI5Y6G5Y+y77yJGOWtpuenkeaVmeWtpu+8iOaAneaUv++8iRjlrabnp5HmlZnlrabvvIjkvZPogrLvvIkJ54mZ5Yy75a2mDOWyqeWcn+W3peeoixLnoJTnqbbnlJ/mlZnogrLlraYJ55y856eR5a2mCeecvOenkeWtpgnnnLznp5HlraYM55y86KeG5YWJ5a2mDOecvOinhuWFieWtpgnoja/liYLlraYJ6I2v55CG5a2mD+iNr+eJqeWIhuaekOWtpgzoja/nianljJblraYG6I2v5a2mBuiNr+WtphvkuIDoiKzlipvlrabkuI7lipvlrabln7rnoYAP5Yy75a2m6YGX5Lyg5a2mEuS7quWZqOS7quihqOW3peeoixLku6rlmajku6rooajlt6XnqIsJ6YGX5Lyg5a2mBuiJuuacrwzoibrmnK/nrqHnkIYM6Im65pyv6K6+6K6hDOiJuuacr+iuvuiuoQbpn7PkuZAS6Z+z5LmQ5LiO6Iie6LmI5a2mDOW6lOeUqOWMluWtpg/lupTnlKjnu4/mtY7lraYM5bqU55So5pWw5a2mD+W6lOeUqOW/g+eQhuWtpgzoi7Hor63nrJTor5EM6Iux6K+t5Y+j6K+REuiLseivreivreiogOaWh+WtphjokKXlhbvkuI7po5/lk4HljavnlJ/lraYY6JCl5YW75LiO6aOf5ZOB5Y2r55Sf5a2mGOW9seWDj+WMu+WtpuS4juaguOWMu+WtphjlvbHlg4/ljLvlrabkuI7moLjljLvlraYM5pyJ5py65YyW5a2mG+ivreiogOWtpuWPiuW6lOeUqOivreiogOWtphvlm63mnpfmpI3niankuI7op4LotY/lm63oiboV6L+Q56255a2m5LiO5o6n5Yi26K66DOi/kOWKqOWMu+Wtpgzov5DliqjljLvlraYG5ZOy5a2mD+aUv+ayu+e7j+a1juWtpg/mlL/msrvlrabnkIborroJ5qSN54mp5a2mFeWItuWGt+WPiuS9jua4qeW3peeoiwzliLboja/lt6XnqIsM5Lit5YWx5YWa5Y+yD+S4reWbveWPpOS7o+WPshLkuK3lm73lj6Tku6PmloflraYV5Lit5Zu95Y+k5YW45paH54yu5a2mJOS4reWbvei/keeOsOS7o+WPsuWfuuacrOmXrumimOeglOeptgnkuK3lm73lj7IV5Lit5Zu9546w5b2T5Luj5paH5a2mEuS4reWbveivreiogOaWh+WtpgzkuK3lm73lk7LlraYS5Lit5aSW5pS/5rK75Yi25bqmD+S4reilv+WMu+e7k+WQiBXkuK3opb/ljLvnu5PlkIjkuLTluooJ6IK/55ik5a2mCeiCv+eYpOWtpgnogr/nmKTlraYM6YeN55eH5Yy75a2mDOmHjeeXh+WMu+WtpgnkuJPpl6jlj7IM6L2s5YyW5Yy75a2mD+i1hOa6kOS4jueOr+WigwnlrpfmlZnlraYVmQMABjA0MDEwNAYwNTAxMDgGMTAwMTA0BjEwMDEwMwYwODUyMDQGMDg1MjM1BjA4NTYwMQYwODA1MDMGMDgwNTAwBjA4MDUwMQYwODA1MDIGMDg1NjAwBjAyMDIwMwYwODA0MDIGMDIwMjA1BjEwNTEyNAYwODAyMDQGMDQwMTA3BjA1NTMwMAYwNTAzMDIGMTIwMVo4BjEyMDUwMwYwNzAyMDQGMDgwODA1BjA4MDgwMQYwODA4MDQGMDgwODAyBjA4MDgwMAYwODUyMDcGMDg1ODAxBjA4NTQwMAYwODU0MDMGMDg1NDA5BjA4NTIwOAYwODUyMDYGMDg1NjAyBjA4MDcwMAYwODA3MDMGMDcxMDAyBjA1MDIwMgYxMDAyMDIGMTA1MTAyBjQ1MDIwMgYxMDUxMTIGMTAwMjEzBjEwNTExNwY0NTAyMTMGMDgyMjAzBjA3MTAwOAYwMzAxODAGMDM1MTAwBjAzNTEwMgYwMzUxMDEGMDMwMTAyBjAzMDEwMAYxMDAxMDUGMDU1MTAwBjA4MTQwNQYxMDUxMjMGMTA1MTIyBjA3MDMwMgYxMDAyMTEGMTA1MTE1BjQ1MDIxMQYwNzAxMDMGMDQwMTA2BjA3MDMwNQYwODA1MjAGMTI1NjAwBjEyNTYwMQYwODAxMDQGMDgwNzAxBjEyMDIwMAYxMjUxMDAGMTI1MTAxBjQ2MDEwMAYwODE3MDUGMDg1MjM2BjEyNTYwMwYwODAyWjEGMDg1MjM3BjA4NTUwNwYxMjUyMDAGMTA1MzAwBjUxMDEwMAYxMDA0MDAGMTIwMVozBjA4MTQwNAYxMDUxMTMGMDc3MTAyBjA4MDEwMgYxMjAxMDAGMTIwMVo1BjA4NTQwOAYwNzAyMDcGMDg1MjAyBjEzNTEwNQYxMzAzTDIGMTMwNTIwBjAyMDIxMAYwMzAxMDkGMDMwMjA3BjAyMDIwNgYwMjU0MDAGMDMwMjA2BjAyMDIwMQYwNTAxWjEGMDQ1MzAwBjA1MDEwMwYxMDUxMjUGMTA1NDAwBjEwMDIwOQYxMDExMDAGNDUwMjA5BjA4MDcwNgYwNzAzMDAGMDgxNzAxBjA4NTIxNgYwODE3MDAGMDgxNzAyBjA4MzAwMgYwODUyMjkGMDc3NTAxBjA4MzAwMAYxMjUzMDAGMTIwMjAxBjA4NTUwMAYwODAyMDIGMDgwMjAwBjA4NTIwMQYwODAyMDMGMDgwMjAxBjA3MDEwMQYxMDAxMDAGMDgwNVoxBjEwMDIxOAYxMDUxMDcGNDUwMjE4BjA4NTIxMQYwODU0MDQGMDgxMjAwBjA3NzQwMgYwODEyMDIGMDgxMjAxBjA3NzMwMwYwNzc0MDMGMDgxMjAzBjA3MDEwMgYxMjAyMDQGMDgxMTAyBjA4MTMwMgYwODEzMDAGMDg1MjEzBjA0NTEwMAYwNDUxMDEGMDQwMTEwBjEyMDQwMwYwNDAxMDEGMDgxNDAyBjAyNTEwMAYwMjAyMDQGMDMwMTA3BjAyMDEwMwYwODA0MDEGMTAwMjA1BjEwNTEwNQY0NTAyMDUGMTAwMlo2BjEwMDIxNQYxMDUxMTAGMDEwMTA4BjAzMDIwMwYwNDAxMDIGMDcwMkoyBjA4MzAyMQYwODUyMTAGMDgxMTAwBjA4MTEwMQYxMDAzMDEGMTAwMzAyBjEwMDMwMAYxMDUyMDAGNTAwMjAwBjAyMDIwNwYxMDA0MDIGMTAwMjAzBjEwNTEwMwYwMjAxMDAGMDcwMjAxBjA4MDEwMAYxMjAxWjcGMDgzMjAyBjEwNTExOQYxMDUxMjgGMTAwMjIxBjEwMDIwOAYxMDUxMDgGMTA1MTIwBjQ1MDIwOAYxMDAyMDAGMTA1MTAwBjA4MDcwNAYwODAxMDMGMTAwNDAxBjEyMDIwMwYxMjU0MDAGMDEwMTA1BjEwMDIxNwYxMDUxMTgGNDUwMjE3BjAzMDUwMgYwMzA1MDEGMDMwNTAwBjAzMDIwNQYwMTAxMDEGMDMwNTAzBjEzNTEwNwYxMzA0MDAGMTMwNEwxBjEzMDUyMQYxMDAxMDIGMDMwMTA1BjEwMDIwMQYxMDUxMDEGNDUwMTAxBjQ1MDIwMQYwODU4MDAGMDcwMjA1BjA4MzIwMwYwOTUxMTIGMTAwMjA2BjEwNTEwNgYxMjAyMDIGMDgxNDA2BjEyMDUwMgYwMjAyMDIGMTIwMVo0BjEwNTEwOQYxMDUxMjcGMDIwMTA2BjEwMDEwMQYwNzA1MDIGMDUwMjA1BjA4MzUwMAYwODUyMTIGMDg1NDA1BjA0MDEyMAYwNDAxWjEGMTMwNTAwBjEzMDUyMgYxMjA0MDQGMDM1MjAwBjEwNzMwMgYxMDc0MDEGMTIwMVoyBjEwMDIwNAYxMDUxMDQGNDUwMjA0BjA3MTAwNgYwNzEwMDMGMDcxMzAwBjA4NTIzOAYwODE3MDMGMDcxMDEwBjA3MTAwMAYwODUyMzAGMDg2MDAwBjA4MzJaNgYwODUyMzEGMDk1MTEzBjA5NTEzNQYwODMyMDEGMDgzMjAwBjAyMDEwNQYwODE0MDMGMDg1OTA1BjAyMDIwOQYwNzAxMDAGMDgzMjA0BjA5MDgwMQYwODE1MDAGMDg1MjE0BjA4NTkwMgYwODE1MDQGMDcxMDA0BjAzMDUwNQYwMzAxMDYGMDQwMzAxBjA0MDMwMAYwNzA0MDEGMDg1NDAyBjA4MTAwMQYwNzE0MDAGMTIwNTAxBjEyNTUwMAYxMjA1MDAGMTIwNDA1BjA4MTQwMAYwODU5MDEGMDg1OTAwBjA1MDIxMQYwMTAxMDMGMTAwMjEwBjEwNTExMQY0NTAyMTAGMDgzOTAwBjA4NTQxMgYwODA1SjEGMDgwNTIxBjA3MTAwNQYxMDA0MDUGMDYwMjAxBjA2MDJaMQYxMjAxWjYGMDUwMTAxBjA3MDMwMQYwNzAyMDgGMTM1MTA2BjA3MDMwNAYwNzAyMDAGMDg1MjQwBjAyMDEwNAYwNzEwMDkGMDQ1MTE0BjAzMDEwMwYwODUyMzkGMDQ1MTE1BjA0NTExNgYwNTAzMDAGMDUwMzAxBjA1NTIwMAYwODEwMDIGMTIwMVoxBjA4MTAwMAYwMzAxMDQGMTIwNDAxBjA0NTEwOQYwNDUxMDIGMDQ1MTEyBjEwMDJaMgYwODE0MDEGMDQwMVoyBjEwMDIxMgYxMDUxMTYGNDUwMjEyBjEwMDJaNAYxMDA0WjQGMTAwNzAyBjEwMDcwNgYxMDA3MDQGMTAwNzAxBjEwMDcwMAYxMDU1MDAGMDgwMTAxBjEwNTEyNgYwODUyMDMGMDg1NDA3BjA3MTAwNwYxMzUxMDAGMTIwMVo5BjEzNTEwOAY1NTAxMDgGMTM1MTAxBjEzMDIwMAYwODE3MDQGMDIwMjAwBjA3MDEwNAYwNDAyMDMGMDU1MTAxBjA1NTEwMgYwNTAyMDEGMDc3OTAzBjEwMDQwMwYxMDAyMDcGNDUwMjA3BjA3MDMwMwYwNTAxMDIGMDkwNzA2BjA3MDEwNQYxMDAyMTYGMTA1MTE0BjAxMDEwMAYwMjAxMDEGMDMwMjAxBjA3MTAwMQYwODA3MDUGMDg2MDAyBjAzMDIwNAYwNjAxMDYGMDUwMTA1BjA1MDEwNAYwMzA1MDYGMDYwMjAwBjA1MDEwNgYwNTAxMDAGMDEwMTAyBjAzMDIwMgYxMDA2MDAGMTAwNjAyBjEwMDIxNAYxMDUxMjEGNDUwMjE0BjEwMDJaMQYxMDAyWjMGMDYwMTA1BjEwMDFaMQYwODU3MDAGMDEwMTA3FCsDmQNnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dn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aBsAAAAAAABHQAEAAAAfCmceDFRhYmxlQ2FwdGlvbgUQUGFnZVNpemVDb21ib0JveB8HAoACHgpJbnB1dFRpdGxlZR4TRW5hYmxlRW1iZWRkZWRTa2luc2ceHU9uQ2xpZW50U2VsZWN0ZWRJbmRleENoYW5naW5nBTBUZWxlcmlrLldlYi5VSS5HcmlkLkNoYW5naW5nUGFnZVNpemVDb21ib0hhbmRsZXIfAmQfD2ceEUVuYWJsZUFyaWFTdXBwb3J0aB4cT25DbGllbnRTZWxlY3RlZEluZGV4Q2hhbmdlZAUuVGVsZXJpay5XZWIuVUkuR3JpZC5DaGFuZ2VQYWdlU2l6ZUNvbWJvSGFuZGxlcmQPFCsABRQrAAIPFgYfAAUCMjAfBAUCMjAfBWcWAh4Qb3duZXJUYWJsZVZpZXdJZAUOUmFkR3JpZDFfY3RsMDBkFCsAAg8WBh8ABQMxNTAfBAUDMTUwHwVoFgIfJAUOUmFkR3JpZDFfY3RsMDBkFCsAAg8WBh8ABQMzMDAfBAUDMzAwHwVoFgIfJAUOUmFkR3JpZDFfY3RsMDBkFCsAAg8WBh8ABQM1MDAfBAUDNTAwHwVoFgIfJAUOUmFkR3JpZDFfY3RsMDBkFCsAAg8WBh8ABQQxMDAwHwQFBDEwMDAfBWgWAh8kBQ5SYWRHcmlkMV9jdGwwMGQPFCsBBWZmZmZmFgEFd1RlbGVyaWsuV2ViLlVJLlJhZENvbWJvQm94SXRlbSwgVGVsZXJpay5XZWIuVUksIFZlcnNpb249MjAxNS4yLjYyMy40NSwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj0xMjFmYWU3ODE2NWJhM2Q0Fg5mDw8WBB8GBQlyY2JIZWFkZXIfBwICZGQCAQ8PFgQfBgUJcmNiRm9vdGVyHwcCAmRkAgIPDxYGHwAFAjIwHwQFAjIwHwVnFgIfJAUOUmFkR3JpZDFfY3RsMDBkAgMPDxYGHwAFAzE1MB8EBQMxNTAfBWgWAh8kBQ5SYWRHcmlkMV9jdGwwMGQCBA8PFgYfAAUDMzAwHwQFAzMwMB8FaBYCHyQFDlJhZEdyaWQxX2N0bDAwZAIFDw8WBh8ABQM1MDAfBAUDNTAwHwVoFgIfJAUOUmFkR3JpZDFfY3RsMDBkAgYPDxYGHwAFBDEwMDAfBAUEMTAw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DxYCHwBlZBYCZg8VAQnmnKrlrqHmoLhkAgcPZBYCZg8PFgIfA2hkZAItD2QWAgIBDw8WAh8ABRjljZfmmIzlpKflrabnoJTnqbbnlJ/pmaJkZBgEBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WDAURUmFkV2luZG93TWFuYWdlcjEFDkZvcm1EZWNvcmF0b3IxBQhSYWRHcmlkMQUlUmFkR3JpZDEkY3RsMDAkY3RsMDIkY3RsMDAkUmFkQnV0dG9uNwUlUmFkR3JpZDEkY3RsMDAkY3RsMDIkY3RsMDAkUmFkQnV0dG9uNAUlUmFkR3JpZDEkY3RsMDAkY3RsMDIkY3RsMDAkUmFkQnV0dG9uMgUkUmFkR3JpZDEkY3RsMDAkY3RsMDIkY3RsMDAkYnV0UmV0dXJuBTtSYWRHcmlkMSRjdGwwMCRjdGwwMiRjdGwwMiRDbGllbnRTZWxlY3RDb2x1bW5TZWxlY3RDaGVja0JveAUrUmFkR3JpZDEkY3RsMDAkY3RsMDMkY3RsMDEkUGFnZVNpemVDb21ib0JveAU1UmFkR3JpZDEkY3RsMDAkY3RsMDQkQ2xpZW50U2VsZWN0Q29sdW1uU2VsZWN0Q2hlY2tCb3gFNVJhZEdyaWQxJGN0bDAwJGN0bDA2JENsaWVudFNlbGVjdENvbHVtblNlbGVjdENoZWNrQm94BTVSYWRHcmlkMSRjdGwwMCRjdGwwOCRDbGllbnRTZWxlY3RDb2x1bW5TZWxlY3RDaGVja0JveAUrUmFkR3JpZDEkY3RsMDAkY3RsMDMkY3RsMDEkUGFnZVNpemVDb21ib0JveA8UKwACBQIyMAUCMjBkBStSYWRHcmlkMSRjdGwwMCRjdGwwMiRjdGwwMSRQYWdlU2l6ZUNvbWJvQm94DxQrAAJlBQIyMGQFC1NraW5DaG9vc2VyDxQrAAJlBQpPZmZpY2UyMDA3ZIC3tva66xlT6A7YWzZ92XwBXQhCyEjEna8Turnj4Ng/" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=iDh2NPPIgaO2Tkat2hrwfVnMpsSB9XJzNXOtdCHM_sA3Tq7v3x-RzZbk0Jny26ZXsomH7pOPpPgMhtO3OdZfvp-8beLiQfEdu8vjwNZhiWM1&amp;t=637109961120000000" type="text/javascript"></script>
+
+<link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=tJ-86caR-1LFv6w6cSYBHEqWUneHBQQY5V9tDDcb1onluQW4kQpDoCJpI4Ga6Sn6gMUjKB4OGZVxizrivt0KziyY_7bFvhGL7yI1JF9B7iv7LHic08tSMSW6nz1IQiy6jNLI-w2RVCje60lXJ6h18g2&amp;t=637323297729196204' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=atUOQdtAQ1KvIsDriByTm1exRxbScrW7_moU4gRRkdJ5u6x8RyzmNgyb6bPSCG61LfOvZ_pwN-h7PoRWNs-Y69jDj8zphO8On86Ds7d-4-uAUqqxsqwE-6xN6Qii9q3VtpR65kVANlSi215UraWejuIMPuIfxt-RBgDeWgWcFXtD1C9Mu_MZvbvNg56biK9a0&amp;t=637323297567580742' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=tQ2ToWAibnua7120T_Yho53BNRFYu5l4UuaPar7m_9fifVCz9QS_MbladaWlh-j27i6cPZD2NFN7F36r4od3Qs9MBH7R2j-36YEXD7K8RsjizYUDJwqhBHWYM-kWyIN_HlxHTwl8knTE492D74GtXA2&amp;t=637323297729196204' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=4yJ4bRCQxmk1SQT7IFjZwHIrV8Zs7dGps--jeKf7u_sNZ0PdM8SU2hkkbfZyh_DrKVWltB7oYkPYk99zm7bRXV5Bn3C-jn514_f_Brbtp02p7HThkiCJG4PO1-0Ir2c0vY1xXjXywgIaqs0TdsWj-iQ-Lhiem-sP1mcYRWyHcl51HHfCEirH7bGdzSWu_niR0&amp;t=637323297567580742' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=RB73QASmyMtdjHhyEl2qPIy-DTUP94jb8X9boJMRvHxQxG8iOZ29pjgqQ1pFNijZRPLsUWLsaP5NmK18twa7iDDyDFC3Ka5_1BUEwp4v6RDYa-Cit1M-_16vB3qHw3pTgPR0I4SD_6YBpgPecU2fUg2&amp;t=637323297729196204' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=nZB6lVnUs5apPQU1_qYJ1aqKvuhcNqhaE0VjZJVDi9ZTarfKD8ToB_y4TDBjqFAtuVrpIgjgeNZp-BcajdTj8W-EG_nnGu02g0MLZx8e2YBXifNHq2lTRopk0aH--QhTdeFYkPeirXvJAf_kMFgKeGoiFWtyiQjFJ8DvfSWJtFjdhXahAcM5vclEbaIzb8bz0&amp;t=637323297567580742' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=HidgAkgdYYcdX3xOjljKuuYPwsbdeh5zfqJ2Qqex3YILR9GiYZIEa1pMrCCnB4HJtcjoFsBrHDwdgCVtvymJZdEvoGi0pYNmqznpEnOmR7LaHXzN9G7ixq0iaIhraeZ44oxOLsMiyMO9VPgDhgcd_w2&amp;t=637323297729196204' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=JJzHXjlifkLbAXXTjmCAqDlsp56aDGvm-Y-e28QaAK9tJhdB15AMy8ief4-X1CMDNCB8GeydJoKhxQnNHZvLDCbtU8QnxZyWx7DelZPypEvRexCdnNaljylvRMvBQEFjvexVkRzckEMDqDMJYMrU91Pe2ixWqKx9xv032t0y7D602T_rVWYZcjAsw_1uBeMK0&amp;t=637323297567580742' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=IDeO8VRfcSZlCfEp-c7IUi2nNaFhdP2EU2am40Lq9qdvSRG3MFlQa7QM5nX6-5jwywnFUGfsUbNTK11y_yisPguiazoN7g2rd2k0BTzSDPdAys2SHy-3QS-lLlnToG2Xs2MWMdHqys4LN02byj9q9Q2&amp;t=637323297729196204' /><link class='Telerik_stylesheet' type='text/css' rel='stylesheet' href='/WebResource.axd?d=7LnZL3cXP1iqJbn5684zx6dp_JQtR-TPM9Zc6ZhB2XP4d4Z1mpxOX0wZjBdaBqK8VC40XjqreuTl8IWi3savesQUaPhE_ekjOukD8V5WTO0dV4plZrffFFnfcmiyLFOWiT4lOuM9K5GzOOlTdDpx-ZqdFSomxXlUOhoBL0SOvcxU4LVHR2o46gpjQsW745i90&amp;t=637323297567580742' />
+<script src="/ScriptResource.axd?d=Y5tjZ9C8rLi4dBqKLBeUZGJ4hbr6nIgbNxxaIQC91Fq-Oh2FBMmwnxXj_avx3hEIlgnIYwmsgP-I0EWXQPrvs1gDAfw68x2KaUkzHKFPdVD0oKuvqv_UfgSbtGPI_qm0nRSTTRMQjqnOFZm7SrefHaS4KBrYgrkWYvYPQcqRyniryOHWLDWZjKCQf7DnuRvv0&amp;t=ffffffffe6d5a9ac" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax 客户端框架未能加载。');
+//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=9XrhOew0U9K2ZmGm0oowsa80MWtCwqK78blQqVhtH3Y9ZFGL837blSQoW7-YoFqNdhgl822nojszq9Xr1_pWK7GVVDJPcjjiQtrlRto_ilDPqoVu6qIqlZQx6_87rW_5rQ9zJi4ZKuOrvP3wgJnnE9X6Gj0QNyIVMZZIkKwzUFHRabPmL7-oPMVN7e-oSZ700&amp;t=ffffffffe6d5a9ac" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=-3wcENzwtPExzKraC8B2zpR1Q6yBtYSUbESa_fU9nc0DwZiEYN7UbbT6M5zIsHbF7FLwryDV_SNyFzV3GFItwUHE5E2BZJ5MD96icTCZGqk688l9MVxCWScSUQR2rWwn0QoY-AaZ6nRoiuR1C-twMw2&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=dsUzZ6_0USBMGUs1PPgZL_kl7MmlB_Of2t6a91xmCQVt4UBC1WVe8QLp1BX_mO7VXZnXElkp4YN5CIviddSiw-s9olAU_wBbqToobqoaPiFQWuh0aPTqZxDFhjzepHD-6WZo3pQt-NGJQiKzYbX-3XMfqGPW0JjyZCxdQpG1Nck1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=dNHmOFCRyJgPEsssmGDxG4gZBfMhlRNmew25uuS91b0Tw7S_4G_YKcc1fljODagiHu2E1MC_dv8lo6tZi9GZRBW9wJ2yavj5LLhmqui6uTt9DqgpLhdxdaDrNe2kwYNhaja7iWKX6NSnZVoBSYNpCg2&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=taAe0fhxM2CiaO3HeTiY5JfuSZ6EsXN2gpvwvCYDurQ4qzYgAYkuDanKcOV8bxAhjfv-mvU928k3oloDCbql46rQGGEvxcxcFZWp9cD1iL0NY4pKk2rxA8GT0Mvm89Srn56CaXin4PlJzCoYTaYQ4w2&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=YZP2ez4distSi0B7khspqPWu43giIzKAD_VQhtvg8f0bd6F2je0hn4NNizYD4cgcMQJGgeelwsxjFo37aaVrasdKl7BBNCLBugvStpwPt8Z1KbjT94VprZV6UOIZsnkaulgWmaiez80-5kk3hGaNPSUku0Trb04CjtOrRe8ho_Q1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=lXU3rMCE_hjH8J6Cf1gsLKUSF8uSaY2CA7NLgqxWLkvQhPHDiv1oq7aYXXILTWEk6Po0VKvKyZwcuFwBUeDClPcfsSG4bgXWo2uXb0-51XJNYyqpmC9rXxz371UKmabUg8oLjxF2w_YggttwqbOsaaqzh-qXbYTFswMA6EsvFGI1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=earT2LLYqLloaA601SZh9TMLlk3ml6SXUUc2Ao2nXwlLfsr4ZSpBRuLK6q2Nneymp4BEFOvb5KHYIkbwJ_Wuok-C99Ae4UVrSjaOawsjGLL4uvQwWZz2RJKiyj5J4o9lof0I2o1bvpSBrQh9mpk9EN3E6yMY3SAOe9GLmt6NIq01&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=MRGjZBz_2cGfRTFQz0qcm43zdB2NgtffXZPUBt6OY-A0ezFjoJuPKqvUmfcUx-jDA1uY0RKw5GCd42Z2bNkUYbwUPLVkWRhdZPAf2pEkUtNdliioBTO2gAeRAtB_t8momNaXPd2fzQN-piUjd0mVKUaN9hnw2Cq1kK0McpKr6xj-2-RrzeicgP3MeLyKP_YY0&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=qm-YPBL56D75mjVehP4hs50q4yiFqK5Rxf1bgbuJ8y7ASby4l0P_mLFqE1uy68e8L4rb7YpOX0nLarv0LVQtulLUZF4yEiX9C1t_gSqw3isSmwNoSZYuRjUl3PF0mAzbwCc-dI-Z4k1kZHhU8FnS6ajhTK4x-Bjd_xXbnfjYesXthsZt3F-Z9dUqnVgb_W2F0&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=ElFhMkVnDw10ylNGAqDffcI0wWNZCkz5MfadwXo5yf-ZkkvnzjzrIveOiel1j2mQgga8FYwfLUMhkoh-fPHRdSA8WoCscYd3r7OurtWhBOhNEVaw9iGlXWgo4hv7Ev_UGYuICtfVb6zF2RNaf7usdVuAlGapTf1F_8GfTbigHas1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=fIfIxgheoyNhhicf2D0D85sQQgUMmhTN7R4rzVr0unHCkpA7dR9OCFsQBQ06fgH0QLylP5MVPEeKsyaXJ6JsCIaIpW4LhrxTBa-bRQGICeD-EbQ0ce95TTrzktWgFpB40gDHeaU1g3PPi-nw5lIW-YBD1EnOZzfaeDc_w4sEp681&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=SOcl0gHUt6JASa5IyaRCbJlJ43UZ1GQ8W3F8ZraFJhJjSZrXn8xcCiU32aDkkOhMPKbxOtI3O-YNIA21epIY6Ku7b8K8baj0YzzSaeIPncd_LtRQTZ8zz2GfaYO7HmI_F2uytV5eIpPA1fioswVmYGcWxC9PedsFw4pNZ6mbJ6w1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=H0fEXe5DtyefVXd6Zze4m_Dp8nohQvkjITgq3sGJ6RKoeqMSjeCN2HDFJNpx9AX8OWEtFBP0VoaXuPLsL5KCy5SIBwPfG3Ia6jOR9vBmsFLnil4MvvE-1rwwLurORZlMsB1k3-e2Uv3vLmGfRi0fTjlA41htf9rvcUkLT-XM4Ws1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=vcjkaWm-uXMCHO--9FdfWhaKYmjbomlunZFwQRc8wYCs1x30WnizKnYT_8MdkLWEZ3nXmnVLBwDhtZjb6EvK_nS-XURd2oRekyNH3oePlMfFeQluHwUrmuBL1UGtRhGosTPuB6VLrJJUkGdHCwzrHA2&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=KnvJEWwv0dBQ4QCNm36Es9-8xcDAkBNIS7ewuE9vuWh10WvEHHGuCHdecKz3eXKKfWCi7JWE3E1hpftSVGFevPxqgbw4FiFdNFgtlf7C4DREdh5qbbM-Z-m0X8Cpmx6pxutWLSwTSYnpqUllG7DoQML5pHUhK59_VUFl4qlFU-M1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=fWfLlse8byLYsfhHAsJdLWGuwyiG7wwyIsLlrz0tEFUf_MnN6WaENhxF7bB6wg31iYtpcsB9g-8ii2umCD4Zx4LVGg59zKwXYaDNogvTdyYLAoH5GufubpxGoZm6wvoFbN4jHds-Ku9SCpxzt0UxcgaikfxjU4ovTp1wOhJzBLo1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=s9WyYjB_9987dwfi0RNw4CVI5t51xiVo6JNTLm-Jf6nYV-4X1SQ-7R57H320cibNbhOBI53CtuerZXd8dHLigHvVljW1_k9CLul_Icq0a81AiihgtOzP0FqwTmbizrWKkjN13lgeeqx-I-SzpXy5cavVckREJcOmCbVVzMM2buU1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=aqhJqWD32SG_avdYNszCrE4zy0dMoNOmqX7N9ESMfsP2yp5pTQiD4P8Dl62un-tgOjKW1WdP11sQIRHtkrwc4J625zkIn8R4TwU0y9FKdu2s9yYbB0lKTd9U5lKxYiKzB-vrX8hqpeMRukgh3Xrqe7-bNfO-oWY8IZPD6XypV781&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=TdXWn0rUegLbmvnfQi7o2XgEPsBC5IUtnAImvezg1fMBF9NKl0y0a-rt3wyP8GXYm3Uh7YThHp82BdpgC6PKQDAnSHYwHQsJp8MjZB93oNeK6GSpzKJLRiN_qJIhPaGd-DKFInPV6tx4B1cJYtZKDGpH-jejJtmPlM-4q2wNX9s1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=0nyWwrYEXhCeDqLmhR7NeDKMjB4KIhzrCDJWRT_6g98qx6YAny0Ln7BQ2WZBZ472cLTuKV89nhlWNH3VhhknO9LDYMRw-kS1KHOjIyucy1eH7wxcaE69O-jjjH6pGI0adY4PtT4uWHMmVXV81CkRWPCmGEPVCThnbxLBS4TQy8w1&amp;t=ffffffff927e2b28" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="B6756AA5" />
+</div>
+        
+<link rel="stylesheet" href="../Skin/style2/style.css" type="text/css" />
+<table align="center" cellpadding="3" cellspacing="0" border="0" class="toptable grid"
+    width="99.8%">
+    <tr>
+        <td height="15" colspan="3" class="category t2" width="100%">
+            <span id="Admin_Info1_lbInfo"></span>
+        </td>
+    </tr>
+</table>
+
+        
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ScriptManager1', 'form1', [], [], [], 90, '');
+//]]>
+</script>
+
+        <div id="RadWindowManager1" style="display:none;">
+	<!-- 2015.2.623.45 --><div id="RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialogPopup radalert">			
+			<div class="rwDialogText">
+			{1}				
+			</div>
+			
+			<div>
+				<a  onclick="$find('{0}').close(true);"
+				class="rwPopupButton" href="javascript:void(0);">
+					<span class="rwOuterSpan">
+						<span class="rwInnerSpan">##LOC[OK]##</span>
+					</span>
+				</a>				
+			</div>
+		</div>
+		</div><div id="RadWindowManager1_prompttemplate" style="display:none;">
+		 <div class="rwDialogPopup radprompt">			
+			    <div class="rwDialogText">
+			    {1}				
+			    </div>		
+			    <div>
+				    <script type="text/javascript">
+				    function RadWindowprompt_detectenter(id, ev, input)
+				    {							
+					    if (!ev) ev = window.event;                
+					    if (ev.keyCode == 13)
+					    {															        
+					        var but = input.parentNode.parentNode.getElementsByTagName("A")[0];					        
+					        if (but)
+						    {							
+							    if (but.click) but.click();
+							    else if (but.onclick)
+							    {
+							        but.focus(); var click = but.onclick; but.onclick = null; if (click) click.call(but);							 
+							    }
+						    }
+					       return false;
+					    } 
+					    else return true;
+				    }	 
+				    </script>
+				    <input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text"  class="rwDialogInput" value="{2}" />
+			    </div>
+			    <div>
+				    <a onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value);"				
+					    class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				    <a onclick="$find('{0}').close(null);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			    </div>
+		    </div>				       
+		</div><div id="RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialogPopup radconfirm">			
+			<div class="rwDialogText">
+			{1}				
+			</div>						
+			<div>
+				<a onclick="$find('{0}').close(true);"  class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				<a onclick="$find('{0}').close(false);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			</div>
+		</div>		
+		</div><input id="RadWindowManager1_ClientState" name="RadWindowManager1_ClientState" type="hidden" />
+</div>
+        <div id="FormDecorator1" class="RadFormDecorator" style="display:none;">
+	<script type="text/javascript">
+//<![CDATA[
+
+if (typeof(WebForm_AutoFocus) != 'undefined' && !isWebFormAutoFocusMethodCalled)
+{   
+	var old_WebForm_AutoFocus = WebForm_AutoFocus;
+	WebForm_AutoFocus = function(arg)
+	{
+		Sys.Application.add_load(function()
+		{            
+			old_WebForm_AutoFocus(arg);
+			WebForm_AutoFocus = old_WebForm_AutoFocus;
+		});
+	}
+    var isWebFormAutoFocusMethodCalled = true;
+}
+if (typeof(Telerik) != 'undefined' && Type.isNamespace(Telerik.Web))
+{
+	if (Telerik.Web.UI.RadFormDecorator)
+	{
+		Telerik.Web.UI.RadFormDecorator.initializePage("FormDecorator1", "", "Office2007", 487);
+	}
+}
+//]]>
+</script><input id="FormDecorator1_ClientState" name="FormDecorator1_ClientState" type="hidden" />
+</div>
+        
+        <table width="100%" border="1" cellpadding="1" cellspacing="1" class="toptable grid">
+            <tr>
+                <td colspan="8">
+                    <span id="lwtjmsg"></span>
+                    <input name="hidval" type="hidden" id="hidval" />
+                </td>
+            </tr>
+            <tr>
+                <td align="right" class="style3">学号：
+                </td>
+                <td align="left" class="style3">
+                    <input name="txt_username" type="text" id="txt_username" style="width: 100px;" />
+                </td>
+                <td align="right" class="style3">姓名：
+                </td>
+                <td align="left" class="style3">
+                    <input name="txt_realname" type="text" id="txt_realname" style="width: 100px;" />
+                </td>
+                <td align="right" class="style3">学院：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_college" id="ddl_college" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="2100">艺术学院</option>
+	<option value="2200">物理与材料学院</option>
+	<option value="2300">资源与环境学院</option>
+	<option value="2400">先进制造学院</option>
+	<option value="2500">工程建设学院</option>
+	<option value="2700">公共政策与管理学院</option>
+	<option value="2800">化学化工学院</option>
+	<option value="3006">第一临床医学院</option>
+	<option value="3007">第二临床医学院</option>
+	<option value="3008">第四临床医学院</option>
+	<option value="3009">口腔医学院</option>
+	<option value="3011">第三临床医学院</option>
+	<option value="3016">附属肿瘤医院</option>
+	<option value="3061">儿科医学院</option>
+	<option value="4301">附属妇幼保健医院</option>
+	<option value="4302">附属胸科医院</option>
+	<option value="4305">人民临床医学院</option>
+	<option value="5000">人文学院</option>
+	<option value="5100">外国语学院</option>
+	<option value="5200">艺术与设计学院</option>
+	<option value="5300">法学院</option>
+	<option value="5400">经济管理学院</option>
+	<option value="5500">理学院</option>
+	<option value="5600">生命科学学院</option>
+	<option value="5700">材料科学与工程学院</option>
+	<option value="5701">稀士研究院</option>
+	<option value="5800">资源环境与化工学院</option>
+	<option value="5900">机电工程学院</option>
+	<option value="6000">建筑工程学院</option>
+	<option value="6100">信息工程学院</option>
+	<option value="6200">体育学院</option>
+	<option value="6300">新闻与传播学院</option>
+	<option value="6400">基础医学院</option>
+	<option value="6500">公共卫生学院</option>
+	<option value="6600">护理学院</option>
+	<option value="6700">药学院</option>
+	<option value="7100">公共管理学院</option>
+	<option value="7200">马克思主义学院</option>
+	<option value="7400">转化医学研究院</option>
+	<option value="7700">管理学院</option>
+	<option value="7800">化学学院</option>
+	<option value="7900">食品学院</option>
+	<option value="8000">软件学院</option>
+	<option value="8500">旅游学院</option>
+	<option value="8800">建筑与设计学院</option>
+	<option value="9027">高等研究院</option>
+	<option value="9033">眼视光学院</option>
+	<option value="9088">教育发展研究院</option>
+	<option value="9100">数学与计算机学院</option>
+
+</select>
+                </td>
+                <td align="right" class="style3">专业：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_profess" id="ddl_profess" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="040104">比较教育学</option>
+	<option value="050108">比较文学与世界文学</option>
+	<option value="100104">病理学与病理生理学</option>
+	<option value="100103">病原生物学</option>
+	<option value="085204">材料工程</option>
+	<option value="085235">材料工程</option>
+	<option value="085601">材料工程</option>
+	<option value="080503">材料加工工程</option>
+	<option value="080500">材料科学与工程</option>
+	<option value="080501">材料物理与化学</option>
+	<option value="080502">材料学</option>
+	<option value="085600">材料与化工</option>
+	<option value="020203">财政学</option>
+	<option value="080402">测试计量技术及仪器</option>
+	<option value="020205">产业经济学</option>
+	<option value="105124">超声医学</option>
+	<option value="080204">车辆工程</option>
+	<option value="040107">成人教育学</option>
+	<option value="055300">出版</option>
+	<option value="050302">传播学</option>
+	<option value="1201Z8">传媒管理学</option>
+	<option value="120503">档案学</option>
+	<option value="070204">等离子体物理</option>
+	<option value="080805">电工理论与新技术</option>
+	<option value="080801">电机与电器</option>
+	<option value="080804">电力电子与电力传动</option>
+	<option value="080802">电力系统及其自动化</option>
+	<option value="080800">电气工程</option>
+	<option value="085207">电气工程</option>
+	<option value="085801">电气工程</option>
+	<option value="085400">电子信息</option>
+	<option value="085403">电子信息(控制工程专业方向)</option>
+	<option value="085409">电子信息(生物医学工程专业方向)</option>
+	<option value="085208">电子与通信工程</option>
+	<option value="085206">动力工程</option>
+	<option value="085602">动力工程</option>
+	<option value="080700">动力工程及工程热物理</option>
+	<option value="080703">动力机械及工程</option>
+	<option value="071002">动物学</option>
+	<option value="050202">俄语语言文学</option>
+	<option value="100202">儿科学</option>
+	<option value="105102">儿科学</option>
+	<option value="450202">儿科学</option>
+	<option value="105112">儿外科学</option>
+	<option value="100213">耳鼻咽喉科学</option>
+	<option value="105117">耳鼻咽喉科学</option>
+	<option value="450213">耳鼻咽喉科学</option>
+	<option value="082203">发酵工程</option>
+	<option value="071008">发育生物学</option>
+	<option value="030180">法律</option>
+	<option value="035100">法律</option>
+	<option value="035102">法律（法学）</option>
+	<option value="035101">法律（非法学）</option>
+	<option value="030102">法律史</option>
+	<option value="030100">法学</option>
+	<option value="100105">法医学</option>
+	<option value="055100">翻译</option>
+	<option value="081405">防灾减灾工程及防护工程</option>
+	<option value="105123">放射影像学</option>
+	<option value="105122">放射肿瘤学</option>
+	<option value="070302">分析化学</option>
+	<option value="100211">妇产科学</option>
+	<option value="105115">妇产科学</option>
+	<option value="450211">妇产科学</option>
+	<option value="070103">概率论与数理统计</option>
+	<option value="040106">高等教育学</option>
+	<option value="070305">高分子化学与物理</option>
+	<option value="080520">高分子科学与工程</option>
+	<option value="125600">工程管理</option>
+	<option value="125601">工程管理</option>
+	<option value="080104">工程力学</option>
+	<option value="080701">工程热物理</option>
+	<option value="120200">工商管理</option>
+	<option value="125100">工商管理</option>
+	<option value="125101">工商管理（英文）</option>
+	<option value="460100">工商管理硕士</option>
+	<option value="081705">工业催化</option>
+	<option value="085236">工业工程</option>
+	<option value="125603">工业工程与管理</option>
+	<option value="0802Z1">工业控制工程</option>
+	<option value="085237">工业设计工程</option>
+	<option value="085507">工业设计工程</option>
+	<option value="125200">公共管理</option>
+	<option value="105300">公共卫生</option>
+	<option value="510100">公共卫生硕士</option>
+	<option value="100400">公共卫生与预防医学</option>
+	<option value="1201Z3">公共政策与公共管理</option>
+	<option value="081404">供热、供燃气、通风及空调工程</option>
+	<option value="105113">骨科学</option>
+	<option value="077102">固体力学</option>
+	<option value="080102">固体力学</option>
+	<option value="120100">管理科学与工程</option>
+	<option value="1201Z5">管理数学与决策工程</option>
+	<option value="085408">光电信息工程</option>
+	<option value="070207">光学</option>
+	<option value="085202">光学工程</option>
+	<option value="135105">广播电视</option>
+	<option value="1303L2">广播电视艺术学</option>
+	<option value="130520">广播电视艺术学</option>
+	<option value="020210">国防经济</option>
+	<option value="030109">国际法学</option>
+	<option value="030207">国际关系</option>
+	<option value="020206">国际贸易学</option>
+	<option value="025400">国际商务</option>
+	<option value="030206">国际政治</option>
+	<option value="020201">国民经济学</option>
+	<option value="0501Z1">国学</option>
+	<option value="045300">汉语国际教育</option>
+	<option value="050103">汉语言文字学</option>
+	<option value="105125">核医学</option>
+	<option value="105400">护理</option>
+	<option value="100209">护理学</option>
+	<option value="101100">护理学</option>
+	<option value="450209">护理学</option>
+	<option value="080706">化工过程机械</option>
+	<option value="070300">化学</option>
+	<option value="081701">化学工程</option>
+	<option value="085216">化学工程</option>
+	<option value="081700">化学工程与技术</option>
+	<option value="081702">化学工艺</option>
+	<option value="083002">环境工程</option>
+	<option value="085229">环境工程</option>
+	<option value="077501">环境科学</option>
+	<option value="083000">环境科学与工程</option>
+	<option value="125300">会计</option>
+	<option value="120201">会计学</option>
+	<option value="085500">机械</option>
+	<option value="080202">机械电子工程</option>
+	<option value="080200">机械工程</option>
+	<option value="085201">机械工程</option>
+	<option value="080203">机械设计及理论</option>
+	<option value="080201">机械制造及其自动化</option>
+	<option value="070101">基础数学</option>
+	<option value="100100">基础医学</option>
+	<option value="0805Z1">极端条件材料与物理</option>
+	<option value="100218">急诊医学</option>
+	<option value="105107">急诊医学</option>
+	<option value="450218">急诊医学</option>
+	<option value="085211">计算机技术</option>
+	<option value="085404">计算机技术</option>
+	<option value="081200">计算机科学与技术</option>
+	<option value="077402">计算机软件与理论</option>
+	<option value="081202">计算机软件与理论</option>
+	<option value="081201">计算机系统结构</option>
+	<option value="077303">计算机应用技术</option>
+	<option value="077403">计算机应用技术</option>
+	<option value="081203">计算机应用技术</option>
+	<option value="070102">计算数学</option>
+	<option value="120204">技术经济及管理</option>
+	<option value="081102">检测技术与自动化装置</option>
+	<option value="081302">建筑设计及其理论</option>
+	<option value="081300">建筑学</option>
+	<option value="085213">建筑与土木工程</option>
+	<option value="045100">教育</option>
+	<option value="045101">教育管理</option>
+	<option value="040110">教育技术学</option>
+	<option value="120403">教育经济与管理</option>
+	<option value="040101">教育学原理</option>
+	<option value="081402">结构工程</option>
+	<option value="025100">金融</option>
+	<option value="020204">金融学</option>
+	<option value="030107">经济法学</option>
+	<option value="020103">经济史</option>
+	<option value="080401">精密仪器及机械</option>
+	<option value="100205">精神病与精神卫生学</option>
+	<option value="105105">精神病与精神卫生学</option>
+	<option value="450205">精神病与精神卫生学</option>
+	<option value="1002Z6">精准医学</option>
+	<option value="100215">康复医学与理疗学</option>
+	<option value="105110">康复医学与理疗学</option>
+	<option value="010108">科学技术哲学</option>
+	<option value="030203">科学社会主义与国际共产主义运动</option>
+	<option value="040102">课程与教学论</option>
+	<option value="0702J2">空间等离子体物理与技术</option>
+	<option value="083021">空间环境科学与技术</option>
+	<option value="085210">控制工程</option>
+	<option value="081100">控制科学与工程</option>
+	<option value="081101">控制理论与控制工程</option>
+	<option value="100301">口腔基础医学</option>
+	<option value="100302">口腔临床医学</option>
+	<option value="100300">口腔医学</option>
+	<option value="105200">口腔医学</option>
+	<option value="500200">口腔医学硕士</option>
+	<option value="020207">劳动经济学</option>
+	<option value="100402">劳动卫生与环境卫生学</option>
+	<option value="100203">老年医学</option>
+	<option value="105103">老年医学</option>
+	<option value="020100">理论经济学</option>
+	<option value="070201">理论物理</option>
+	<option value="080100">力学</option>
+	<option value="1201Z7">历史遗产管理</option>
+	<option value="083202">粮食、油脂及植物蛋白工程</option>
+	<option value="105119">临床病理</option>
+	<option value="105128">临床病理学</option>
+	<option value="100221">临床病理与病理生理学</option>
+	<option value="100208">临床检验诊断学</option>
+	<option value="105108">临床检验诊断学</option>
+	<option value="105120">临床检验诊断学</option>
+	<option value="450208">临床检验诊断学</option>
+	<option value="100200">临床医学</option>
+	<option value="105100">临床医学</option>
+	<option value="080704">流体机械及工程</option>
+	<option value="080103">流体力学</option>
+	<option value="100401">流行病与卫生统计</option>
+	<option value="120203">旅游管理</option>
+	<option value="125400">旅游管理</option>
+	<option value="010105">伦理学</option>
+	<option value="100217">麻醉学</option>
+	<option value="105118">麻醉学</option>
+	<option value="450217">麻醉学</option>
+	<option value="030502">马克思主义发展史</option>
+	<option value="030501">马克思主义基本原理</option>
+	<option value="030500">马克思主义理论</option>
+	<option value="030205">马克思主义理论与思想政治教育</option>
+	<option value="010101">马克思主义哲学</option>
+	<option value="030503">马克思主义中国化研究</option>
+	<option value="135107">美术</option>
+	<option value="130400">美术学</option>
+	<option value="1304L1">美术学</option>
+	<option value="130521">美术学</option>
+	<option value="100102">免疫学</option>
+	<option value="030105">民商法学</option>
+	<option value="100201">内科学</option>
+	<option value="105101">内科学</option>
+	<option value="450101">内科学</option>
+	<option value="450201">内科学</option>
+	<option value="085800">能源动力</option>
+	<option value="070205">凝聚态物理</option>
+	<option value="083203">农产品加工及贮藏工程</option>
+	<option value="095112">农业信息化</option>
+	<option value="100206">皮肤病与性病学</option>
+	<option value="105106">皮肤病与性病学</option>
+	<option value="120202">企业管理</option>
+	<option value="081406">桥梁与隧道工程</option>
+	<option value="120502">情报学</option>
+	<option value="020202">区域经济学</option>
+	<option value="1201Z4">区域与产业经济管理</option>
+	<option value="105109">全科医学</option>
+	<option value="105127">全科医学</option>
+	<option value="020106">人口、资源与环境经济学</option>
+	<option value="100101">人体解剖与组织胚胎学</option>
+	<option value="070502">人文地理学</option>
+	<option value="050205">日语语言文学</option>
+	<option value="083500">软件工程</option>
+	<option value="085212">软件工程</option>
+	<option value="085405">软件工程</option>
+	<option value="040120">少年儿童组织与思想意识教育</option>
+	<option value="0401Z1">少年儿童组织与思想意识教育</option>
+	<option value="130500">设计学</option>
+	<option value="130522">设计艺术学</option>
+	<option value="120404">社会保障</option>
+	<option value="035200">社会工作</option>
+	<option value="107302">社会医学与卫生事业管理</option>
+	<option value="107401">社会医学与卫生事业管理</option>
+	<option value="1201Z2">社会治理与法治系统工程</option>
+	<option value="100204">神经病学</option>
+	<option value="105104">神经病学</option>
+	<option value="450204">神经病学</option>
+	<option value="071006">神经生物学</option>
+	<option value="071003">生理学</option>
+	<option value="071300">生态学</option>
+	<option value="085238">生物工程</option>
+	<option value="081703">生物化工</option>
+	<option value="071010">生物化学与分子生物学</option>
+	<option value="071000">生物学</option>
+	<option value="085230">生物医学工程</option>
+	<option value="086000">生物与医药</option>
+	<option value="0832Z6">食品发酵工程</option>
+	<option value="085231">食品工程</option>
+	<option value="095113">食品加工与安全</option>
+	<option value="095135">食品加工与安全</option>
+	<option value="083201">食品科学</option>
+	<option value="083200">食品科学与工程</option>
+	<option value="020105">世界经济</option>
+	<option value="081403">市政工程</option>
+	<option value="085905">市政工程（含给排水等）</option>
+	<option value="020209">数量经济学</option>
+	<option value="070100">数学</option>
+	<option value="083204">水产品加工及贮藏工程</option>
+	<option value="090801">水产养殖</option>
+	<option value="081500">水利工程</option>
+	<option value="085214">水利工程</option>
+	<option value="085902">水利工程</option>
+	<option value="081504">水利水电工程</option>
+	<option value="071004">水生生物学</option>
+	<option value="030505">思想政治教育</option>
+	<option value="030106">诉讼法学</option>
+	<option value="040301">体育人文社会学</option>
+	<option value="040300">体育学</option>
+	<option value="070401">天体物理</option>
+	<option value="085402">通信工程（含宽带网络、移动通信等）</option>
+	<option value="081001">通信与信息系统</option>
+	<option value="071400">统计学</option>
+	<option value="120501">图书馆学</option>
+	<option value="125500">图书情报</option>
+	<option value="120500">图书情报与档案管理</option>
+	<option value="120405">土地资源管理</option>
+	<option value="081400">土木工程</option>
+	<option value="085901">土木工程</option>
+	<option value="085900">土木水利</option>
+	<option value="050211">外国语言学及应用语言学</option>
+	<option value="010103">外国哲学</option>
+	<option value="100210">外科学</option>
+	<option value="105111">外科学</option>
+	<option value="450210">外科学</option>
+	<option value="083900">网络空间安全</option>
+	<option value="085412">网络与信息安全</option>
+	<option value="0805J1">微尺度科学与技术</option>
+	<option value="080521">微纳米材料科学与工程</option>
+	<option value="071005">微生物学</option>
+	<option value="100405">卫生毒理学</option>
+	<option value="060201">文化遗产与旅游规划</option>
+	<option value="0602Z1">文化遗产与旅游规划</option>
+	<option value="1201Z6">文化资源与产业管理</option>
+	<option value="050101">文艺学</option>
+	<option value="070301">无机化学</option>
+	<option value="070208">无线电物理</option>
+	<option value="135106">舞蹈</option>
+	<option value="070304">物理化学</option>
+	<option value="070200">物理学</option>
+	<option value="085240">物流工程</option>
+	<option value="020104">西方经济学</option>
+	<option value="071009">细胞生物学</option>
+	<option value="045114">现代教育技术</option>
+	<option value="030103">宪法学与行政法学</option>
+	<option value="085239">项目管理</option>
+	<option value="045115">小学教育</option>
+	<option value="045116">心理健康教育</option>
+	<option value="050300">新闻传播学</option>
+	<option value="050301">新闻学</option>
+	<option value="055200">新闻与传播</option>
+	<option value="081002">信号与信息处理</option>
+	<option value="1201Z1">信息管理与信息系统</option>
+	<option value="081000">信息与通信工程</option>
+	<option value="030104">刑法学</option>
+	<option value="120401">行政管理</option>
+	<option value="045109">学科教学（历史）</option>
+	<option value="045102">学科教学（思政）</option>
+	<option value="045112">学科教学（体育）</option>
+	<option value="1002Z2">牙医学</option>
+	<option value="081401">岩土工程</option>
+	<option value="0401Z2">研究生教育学</option>
+	<option value="100212">眼科学</option>
+	<option value="105116">眼科学</option>
+	<option value="450212">眼科学</option>
+	<option value="1002Z4">眼视光学</option>
+	<option value="1004Z4">眼视光学</option>
+	<option value="100702">药剂学</option>
+	<option value="100706">药理学</option>
+	<option value="100704">药物分析学</option>
+	<option value="100701">药物化学</option>
+	<option value="100700">药学</option>
+	<option value="105500">药学</option>
+	<option value="080101">一般力学与力学基础</option>
+	<option value="105126">医学遗传学</option>
+	<option value="085203">仪器仪表工程</option>
+	<option value="085407">仪器仪表工程</option>
+	<option value="071007">遗传学</option>
+	<option value="135100">艺术</option>
+	<option value="1201Z9">艺术管理</option>
+	<option value="135108">艺术设计</option>
+	<option value="550108">艺术设计</option>
+	<option value="135101">音乐</option>
+	<option value="130200">音乐与舞蹈学</option>
+	<option value="081704">应用化学</option>
+	<option value="020200">应用经济学</option>
+	<option value="070104">应用数学</option>
+	<option value="040203">应用心理学</option>
+	<option value="055101">英语笔译</option>
+	<option value="055102">英语口译</option>
+	<option value="050201">英语语言文学</option>
+	<option value="077903">营养与食品卫生学</option>
+	<option value="100403">营养与食品卫生学</option>
+	<option value="100207">影像医学与核医学</option>
+	<option value="450207">影像医学与核医学</option>
+	<option value="070303">有机化学</option>
+	<option value="050102">语言学及应用语言学</option>
+	<option value="090706">园林植物与观赏园艺</option>
+	<option value="070105">运筹学与控制论</option>
+	<option value="100216">运动医学</option>
+	<option value="105114">运动医学</option>
+	<option value="010100">哲学</option>
+	<option value="020101">政治经济学</option>
+	<option value="030201">政治学理论</option>
+	<option value="071001">植物学</option>
+	<option value="080705">制冷及低温工程</option>
+	<option value="086002">制药工程</option>
+	<option value="030204">中共党史</option>
+	<option value="060106">中国古代史</option>
+	<option value="050105">中国古代文学</option>
+	<option value="050104">中国古典文献学</option>
+	<option value="030506">中国近现代史基本问题研究</option>
+	<option value="060200">中国史</option>
+	<option value="050106">中国现当代文学</option>
+	<option value="050100">中国语言文学</option>
+	<option value="010102">中国哲学</option>
+	<option value="030202">中外政治制度</option>
+	<option value="100600">中西医结合</option>
+	<option value="100602">中西医结合临床</option>
+	<option value="100214">肿瘤学</option>
+	<option value="105121">肿瘤学</option>
+	<option value="450214">肿瘤学</option>
+	<option value="1002Z1">重症医学</option>
+	<option value="1002Z3">重症医学</option>
+	<option value="060105">专门史</option>
+	<option value="1001Z1">转化医学</option>
+	<option value="085700">资源与环境</option>
+	<option value="010107">宗教学</option>
+
+</select>
+                </td>
+            </tr>
+            <tr>
+                <td align="right" class="style3">学生类别：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_usertype" id="ddl_usertype" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="学术型博士">学术型博士</option>
+	<option value="专业学位博士">专业学位博士</option>
+	<option value="学术型硕士">学术型硕士</option>
+	<option value="专业学位硕士">专业学位硕士</option>
+
+</select>
+                </td>
+                <td align="right" class="style3">学生类别备注
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_usertypememo" id="ddl_usertypememo" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="专业学位硕士">专业学位硕士</option>
+	<option value="学术型硕士">学术型硕士</option>
+	<option value="学术型博士">学术型博士</option>
+	<option value="同等学力">同等学力</option>
+	<option value="内地硕士">内地硕士</option>
+	<option value="内地博士">内地博士</option>
+	<option value="留学生硕士">留学生硕士</option>
+	<option value="留学生博士">留学生博士</option>
+	<option value="港澳台硕士">港澳台硕士</option>
+	<option value="港澳台博士">港澳台博士</option>
+
+</select>
+                </td>
+                <td align="right" class="style3">入学年份：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_rxnf" id="ddl_rxnf" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="202109">202109</option>
+	<option value="202009">202009</option>
+	<option value="201909">201909</option>
+	<option value="201809">201809</option>
+	<option value="201709">201709</option>
+	<option value="201609">201609</option>
+	<option value="201509">201509</option>
+	<option value="201409">201409</option>
+	<option value="201309">201309</option>
+	<option value="201209">201209</option>
+	<option value="201109">201109</option>
+	<option value="201009">201009</option>
+	<option value="200909">200909</option>
+	<option value="200809">200809</option>
+	<option value="200709">200709</option>
+	<option value="200609">200609</option>
+	<option value="200509">200509</option>
+	<option value="200409">200409</option>
+	<option value="200309">200309</option>
+	<option value="200209">200209</option>
+	<option value="200109">200109</option>
+
+</select>
+                </td>
+                 <td align="right" class="style3">申请学位批次：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_SDBDate" id="ddl_SDBDate" style="width:105px;">
+	<option value="">请选择</option>
+	<option value="2020年12月">2020年12月</option>
+	<option value="2020夏第一批">2020夏第一批</option>
+	<option value="2020夏第二批">2020夏第二批</option>
+	<option value="2021年夏">2021年夏</option>
+	<option value="2021年12月">2021年12月</option>
+	<option selected="selected" value="2022年夏">2022年夏</option>
+
+</select>
+                </td>
+            </tr>
+            <tr>              
+                <td align="right" class="style3">提交状态：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_submit" id="ddl_submit" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="1">已提交</option>
+	<option value="0">未提交</option>
+
+</select>
+                </td>
+                <td align="right" class="style3">导师审核：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_dssh" id="ddl_dssh" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="1">通过</option>
+	<option value="0">不通过</option>
+	<option value="2">退回</option>
+	<option value="3">未审核</option>
+
+</select>
+                </td>
+                <td align="right" class="style3">学院审核：
+                </td>
+                <td align="left" class="style3">
+                    <select name="ddl_zxsh" id="ddl_zxsh" style="width:105px;">
+	<option selected="selected" value="">请选择</option>
+	<option value="1">通过</option>
+	<option value="0">不通过</option>
+	<option value="2">退回</option>
+	<option value="3">未审核</option>
+
+</select>
+                </td>
+                <td align="center" class="style3" colspan="8">
+                    <input type="submit" name="Button1" value="" id="Button1" class="submitMiniGreen5" />
+                </td>
+                <tr />
+        </table>
+        <input name="hid_mark" type="hidden" id="hid_mark" />
+        <input name="hid_value" type="hidden" id="hid_value" />
+        <div id="RadGrid1" class="RadGrid RadGrid_Office2007">
+
+<table class="rgMasterTable" border="0" id="RadGrid1_ctl00" style="width:100%;table-layout:auto;empty-cells:show;">
+	<colgroup>
+		<col style="width:40px" />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+		<col  />
+	</colgroup>
+<thead>
+		<tr class="rgCommandRow">
+			<td class="rgCommandCell" colspan="14">
+                    <div style="margin: 0px; padding: 0px; border-width: 0px;">
+                        <div style="float: left; width: 90%">
+                            &nbsp;&nbsp;
+                            <span id="RadGrid1_ctl00_ctl02_ctl00_RadButton7" title="审查" class="RadButton RadButton_Office2007 rbLinkButton" style="display:inline-block;background-color:Transparent;border-width:0px;height:40px;line-height:40px;height:40px;">
+                                    <img alt="审查" src="../images/Edit.png" height="30px" />
+                                    <span class="btnText">审查</span>
+                                <input id="RadGrid1_ctl00_ctl02_ctl00_RadButton7_ClientState" name="RadGrid1_ctl00_ctl02_ctl00_RadButton7_ClientState" type="hidden" /></span>
+                            <span id="RadGrid1_ctl00_ctl02_ctl00_RadButton4" title="批量审核通过" class="RadButton RadButton_Office2007 rbLinkButton" style="display:inline-block;background-color:Transparent;border-width:0px;height:40px;line-height:40px;height:40px;">
+                                    <img alt="批量审核通过" src="../images/Edit.png" height="30px" />
+                                    <span class="btnText">批量审核通过</span>
+                                <input id="RadGrid1_ctl00_ctl02_ctl00_RadButton4_ClientState" name="RadGrid1_ctl00_ctl02_ctl00_RadButton4_ClientState" type="hidden" /></span>
+                            <span id="RadGrid1_ctl00_ctl02_ctl00_RadButton2" title="批量下载论文定稿表" class="RadButton RadButton_Office2007 rbLinkButton" style="display:inline-block;background-color:Transparent;border-width:0px;height:40px;line-height:40px;height:40px;">
+                                    <img alt="批量下载论文定稿表" src="../images/rar.gif" height="30px" />
+                                    <span class="btnText">批量下载论文定稿表</span>
+                                <input id="RadGrid1_ctl00_ctl02_ctl00_RadButton2_ClientState" name="RadGrid1_ctl00_ctl02_ctl00_RadButton2_ClientState" type="hidden" /></span>
+                        </div>
+                        <div style="float: right; padding-right: 10px;">
+                            <span id="RadGrid1_ctl00_ctl02_ctl00_butReturn" class="RadButton RadButton_Office2007 rbLinkButton" style="display:inline-block;background-color:Transparent;border-width:0px;height:40px;width:100px;line-height:40px;height:40px;">
+                                    <img alt="刷新" src="../images/Refresh.png" height="30px" />
+                                    <span class="btnText">刷新</span>
+                                <input id="RadGrid1_ctl00_ctl02_ctl00_butReturn_ClientState" name="RadGrid1_ctl00_ctl02_ctl00_butReturn_ClientState" type="hidden" /></span>
+                        </div>
+                    </div>
+                </td>
+		</tr><tr>
+			<th scope="col" class="rgHeader rgCheck" style="text-align:center;"><input id="RadGrid1_ctl00_ctl02_ctl02_ClientSelectColumnSelectCheckBox" type="checkbox" name="RadGrid1$ctl00$ctl02$ctl02$ClientSelectColumnSelectCheckBox" onclick="$find(&quot;RadGrid1&quot;)._selectAllRows(&quot;RadGrid1_ctl00&quot;, &quot;&quot;, event);" /></th><th scope="col" class="rgHeader">学号</th><th scope="col" class="rgHeader">姓名</th><th scope="col" class="rgHeader">学生类别</th><th scope="col" class="rgHeader">学院</th><th scope="col" class="rgHeader">培养方式</th><th scope="col" class="rgHeader">专业</th><th scope="col" class="rgHeader">研究方向</th><th scope="col" class="rgHeader">入学年月</th><th scope="col" class="rgHeader">导师</th><th scope="col" class="rgHeader">导师职称</th><th scope="col" class="rgHeader">是否提交</th><th scope="col" class="rgHeader">导师审核情况</th><th scope="col" class="rgHeader">学院审核情况</th>
+		</tr>
+	</thead><tfoot>
+		<tr class=" rgPager">
+			<td colspan="14"><table summary="Data pager which controls on which page is the RadGrid control." border="0" style="width:100%;border-spacing:0;">
+				<caption>
+					<span style='display: none'>Data pager</span>
+				</caption><thead>
+					<tr>
+						<th scope="col">Data pager</th>
+					</tr>
+				</thead><tbody>
+					<tr>
+						<td class="rgPagerCell NextPrevAndNumeric"><div class="rgWrap rgArrPart1">
+							<input type="submit" name="RadGrid1$ctl00$ctl03$ctl01$ctl02" value=" " onclick="return false;" title="第一页" class="rgPageFirst" /><input type="submit" name="RadGrid1$ctl00$ctl03$ctl01$ctl03" value=" " onclick="return false;" title="上一页" class="rgPagePrev" />
+						</div><div class="rgWrap rgNumPart">
+							<a onclick="return false;" class="rgCurrentPage" href="javascript:__doPostBack(&#39;RadGrid1$ctl00$ctl03$ctl01$ctl05&#39;,&#39;&#39;)"><span>1</span></a>
+						</div><div class="rgWrap rgArrPart2">
+							<input type="submit" name="RadGrid1$ctl00$ctl03$ctl01$ctl08" value=" " onclick="return false;" title="下一页" class="rgPageNext" /><input type="submit" name="RadGrid1$ctl00$ctl03$ctl01$ctl09" value=" " onclick="return false;" title="最后一页" class="rgPageLast" />
+						</div><div class="rgWrap rgAdvPart">
+							<span id="RadGrid1_ctl00_ctl03_ctl01_ChangePageSizeLabel" class="rgPagerLabel">页规格</span><div id="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox" class="RadComboBox RadComboBox_Office2007" style="width:46px;white-space:normal;">
+								<table summary="" border="0" style="border-width:0;border-collapse:collapse;width:100%">
+									<caption>
+										PageSizeComboBox
+									</caption><tr class="rcbReadOnly">
+										<td class="rcbInputCell rcbInputCellLeft" style="width:100%;"><input name="RadGrid1$ctl00$ctl03$ctl01$PageSizeComboBox" type="text" class="rcbInput radPreventDecorate" id="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_Input" value="20" readonly="readonly" /></td><td class="rcbArrowCell rcbArrowCellRight"><a id="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_Arrow" style="overflow: hidden;display: block;position: relative;outline: none;">select</a></td>
+									</tr>
+								</table><div class="rcbSlide" style="z-index:6000;display:none;"><div id="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_DropDown" class="RadComboBoxDropDown RadComboBoxDropDown_Office2007 "><div class="rcbScroll rcbWidth"><ul class="rcbList" style="list-style:none;margin:0;padding:0;zoom:1;"><li class="rcbItem">20</li><li class="rcbItem">150</li><li class="rcbItem">300</li><li class="rcbItem">500</li><li class="rcbItem">1000</li></ul></div></div></div><input id="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_ClientState" name="RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_ClientState" type="hidden" />
+							</div>
+						</div><div class="rgWrap rgInfoPart">
+							 &nbsp;当前 1 / 1页, 第 1 到 3 条，共 3条数据.
+						</div></td>
+					</tr>
+				</tbody>
+			</table></td>
+		</tr>
+	</tfoot><tbody>
+	<tr class="rgRow" id="RadGrid1_ctl00__0">
+		<td align="center"><input id="RadGrid1_ctl00_ctl04_ClientSelectColumnSelectCheckBox" type="checkbox" name="RadGrid1$ctl00$ctl04$ClientSelectColumnSelectCheckBox" /></td><td>411016119008</td><td>姜文静</td><td>专业学位硕士</td><td>数学与计算机学院</td><td>脱产</td><td>软件工程</td><td>&nbsp;</td><td>201909</td><td>徐子晨</td><td>&nbsp;</td><td>
+                           是
+                        </td><td>
+                            未审核
+                        </td><td>
+                            未审核
+                        </td>
+	</tr><tr class="rgAltRow" id="RadGrid1_ctl00__1">
+		<td align="center"><input id="RadGrid1_ctl00_ctl06_ClientSelectColumnSelectCheckBox" type="checkbox" name="RadGrid1$ctl00$ctl06$ClientSelectColumnSelectCheckBox" /></td><td>401030919017</td><td>谭国龙</td><td>学术型硕士</td><td>数学与计算机学院</td><td>脱产</td><td>计算机科学与技术</td><td>&nbsp;</td><td>201909</td><td>徐子晨</td><td>&nbsp;</td><td>
+                           是
+                        </td><td>
+                            未审核
+                        </td><td>
+                            未审核
+                        </td>
+	</tr><tr class="rgRow" id="RadGrid1_ctl00__2">
+		<td align="center"><input id="RadGrid1_ctl00_ctl08_ClientSelectColumnSelectCheckBox" type="checkbox" name="RadGrid1$ctl00$ctl08$ClientSelectColumnSelectCheckBox" /></td><td>401030919003</td><td>崔傲</td><td>学术型硕士</td><td>数学与计算机学院</td><td>全日制</td><td>计算机科学与技术</td><td>计算机体系结构</td><td>201909</td><td>徐子晨</td><td>&nbsp;</td><td>
+                           是
+                        </td><td>
+                            未审核
+                        </td><td>
+                            未审核
+                        </td>
+	</tr>
+	</tbody>
+
+</table><input id="RadGrid1_ClientState" name="RadGrid1_ClientState" type="hidden" />	</div>
+
+        
+        
+<table width="100%" height="79" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:0px;">
+    <tr >
+        <td align="center" style="font-size: 12px; color: #ffffff;">
+           Copyright 2010-2017 &copy;  All Rights Reserved.<br />单位：<span id="Admin_Bottom1_Systemdwmc">南昌大学研究生院</span> 技术支持： <a href="http://www.witsoftware.com.cn" target="_blank" title="北京智信佳科技有限公司" style="color:#FFFFFF">北京智信佳科技有限公司</a>   
+            <br />
+      </td>
+    </tr>
+</table>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"clientStateFieldID":"RadWindowManager1_ClientState","formID":"form1","iconUrl":"","minimizeIconUrl":"","modal":true,"name":"RadWindowManager1","skin":"Office2007","windowControls":"[]"}, null, null, $get("RadWindowManager1"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadFormDecorator, {"_renderMode":1,"clientStateFieldID":"FormDecorator1_ClientState","decoratedControls":487,"enabled":true,"skin":"Office2007"}, null, null, $get("FormDecorator1"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadButton, {"_accessKey":"","_hasIcon":false,"_hasImage":false,"_isClientSubmit":true,"_isImageButton":false,"_postBackReference":"__doPostBack('RadGrid1$ctl00$ctl02$ctl00$RadButton7','')","_renderMode":1,"buttonType":1,"clientStateFieldID":"RadGrid1_ctl00_ctl02_ctl00_RadButton7_ClientState","height":"40px","iconData":{},"imageData":{},"toggleStatesData":[],"toolTip":"审查","uniqueGroupName":"","uniqueID":"RadGrid1$ctl00$ctl02$ctl00$RadButton7"}, {"clicking":ItemShenCha}, null, $get("RadGrid1_ctl00_ctl02_ctl00_RadButton7"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadButton, {"_accessKey":"","_hasIcon":false,"_hasImage":false,"_isClientSubmit":true,"_isImageButton":false,"_postBackReference":"__doPostBack('RadGrid1$ctl00$ctl02$ctl00$RadButton4','')","_renderMode":1,"buttonType":1,"clientStateFieldID":"RadGrid1_ctl00_ctl02_ctl00_RadButton4_ClientState","height":"40px","iconData":{},"imageData":{},"toggleStatesData":[],"toolTip":"批量审核通过","uniqueGroupName":"","uniqueID":"RadGrid1$ctl00$ctl02$ctl00$RadButton4"}, {"clicking":ItemSC}, null, $get("RadGrid1_ctl00_ctl02_ctl00_RadButton4"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadButton, {"_accessKey":"","_hasIcon":false,"_hasImage":false,"_isClientSubmit":true,"_isImageButton":false,"_postBackReference":"__doPostBack('RadGrid1$ctl00$ctl02$ctl00$RadButton2','')","_renderMode":1,"buttonType":1,"clientStateFieldID":"RadGrid1_ctl00_ctl02_ctl00_RadButton2_ClientState","height":"40px","iconData":{},"imageData":{},"toggleStatesData":[],"toolTip":"批量下载论文定稿表","uniqueGroupName":"","uniqueID":"RadGrid1$ctl00$ctl02$ctl00$RadButton2"}, null, null, $get("RadGrid1_ctl00_ctl02_ctl00_RadButton2"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadButton, {"_accessKey":"","_hasIcon":false,"_hasImage":false,"_isClientSubmit":true,"_isImageButton":false,"_postBackReference":"__doPostBack('RadGrid1$ctl00$ctl02$ctl00$butReturn','')","_renderMode":1,"buttonType":1,"clientStateFieldID":"RadGrid1_ctl00_ctl02_ctl00_butReturn_ClientState","height":"40px","iconData":{},"imageData":{},"toggleStatesData":[],"uniqueGroupName":"","uniqueID":"RadGrid1$ctl00$ctl02$ctl00$butReturn","width":"100px"}, null, null, $get("RadGrid1_ctl00_ctl02_ctl00_butReturn"));
+});
+
+WebForm_InitCallback();Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadComboBox, {"_dropDownWidth":0,"_height":0,"_skin":"Office2007","_text":"20","_uniqueId":"RadGrid1$ctl00$ctl03$ctl01$PageSizeComboBox","_value":"20","clientStateFieldID":"RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox_ClientState","collapseAnimation":"{\"duration\":450}","expandAnimation":"{\"duration\":450}","itemData":[{"value":"20","selected":true,"attributes":{"ownerTableViewId":"RadGrid1_ctl00"}},{"value":"150","attributes":{"ownerTableViewId":"RadGrid1_ctl00"}},{"value":"300","attributes":{"ownerTableViewId":"RadGrid1_ctl00"}},{"value":"500","attributes":{"ownerTableViewId":"RadGrid1_ctl00"}},{"value":"1000","attributes":{"ownerTableViewId":"RadGrid1_ctl00"}}],"localization":"{\"AllItemsCheckedString\":\"All items checked\",\"ItemsCheckedString\":\"items checked\",\"CheckAllString\":\"Check All\"}","selectedIndex":0}, {"selectedIndexChanged":Telerik.Web.UI.Grid.ChangePageSizeComboHandler,"selectedIndexChanging":Telerik.Web.UI.Grid.ChangingPageSizeComboHandler}, null, $get("RadGrid1_ctl00_ctl03_ctl01_PageSizeComboBox"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadGrid, {"ClientID":"RadGrid1","ClientSettings":{"AllowAutoScrollOnDragDrop":true,"ShouldCreateRows":true,"DataBinding":{},"Selecting":{"CellSelectionMode":0,"AllowRowSelect":true,"EnableDragToSelectRows":true},"Scrolling":{},"Resizing":{},"ClientMessages":{},"KeyboardNavigationSettings":{"AllowActiveRowCycle":false,"EnableKeyboardShortcuts":true,"FocusKey":89,"InitInsertKey":73,"RebindKey":82,"ExitEditInsertModeKey":27,"UpdateInsertItemKey":13,"DeleteActiveRow":127,"ExpandDetailTableKey":39,"CollapseDetailTableKey":37,"SaveChangesKey":85,"CancelChangesKey":67},"Animation":{},"Virtualization":{}},"Skin":"Office2007","UniqueID":"RadGrid1","_activeRowIndex":"","_clientKeyValues":{"0":{"ID":"11173"},"1":{"ID":"9966"},"2":{"ID":"9953"}},"_controlToFocus":"","_currentPageIndex":0,"_defaultDateTimeFormat":"yyyy/M/d H:mm:ss","_editIndexes":"[]","_embeddedSkin":true,"_freezeText":"Freeze","_gridTableViewsData":"[{\"ClientID\":\"RadGrid1_ctl00\",\"UniqueID\":\"RadGrid1$ctl00\",\"PageSize\":20,\"PageCount\":1,\"EditMode\":\"EditForms\",\"AllowPaging\":true,\"CurrentPageIndex\":0,\"VirtualItemCount\":0,\"AllowMultiColumnSorting\":false,\"AllowNaturalSort\":true,\"AllowFilteringByColumn\":false,\"PageButtonCount\":20,\"HasDetailTables\":false,\"HasMultiHeaders\":false,\"CheckListWebServicePath\":\"\",\"GroupLoadMode\":\"Server\",\"PagerAlwaysVisible\":true,\"IsItemInserted\":false,\"clientDataKeyNames\":[\"ID\"],\"hasDetailItemTemplate\":false,\"_dataBindTemplates\":false,\"_selectedItemStyle\":\"\",\"_selectedItemStyleClass\":\"rgSelectedRow\",\"_columnsData\":[{\"UniqueName\":\"ClientSelectColumn\",\"Resizable\":true,\"Reorderable\":false,\"Selectable\":false,\"Groupable\":false,\"ColumnType\":\"GridClientSelectColumn\",\"ColumnGroupName\":\"\",\"Editable\":false,\"DataTypeName\":\"System.String\",\"ButtonType\":\"LinkButton\",\"CommandName\":\"\",\"CommandArgument\":\"\",\"Text\":\"\",\"DataTextField\":\"\",\"DataTextFormatString\":\"\",\"ImageUrl\":\"\",\"Display\":true},{\"UniqueName\":\"username\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":false,\"DataTypeName\":\"System.String\",\"DataField\":\"username\",\"ReadOnly\":true,\"Display\":true},{\"UniqueName\":\"userrealname\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"userrealname\",\"Display\":true},{\"UniqueName\":\"usertype\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"usertype\",\"Display\":true},{\"UniqueName\":\"YXMC\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"YXMC\",\"Display\":true},{\"UniqueName\":\"XXFS\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"XXFS\",\"Display\":true},{\"UniqueName\":\"ZYMC\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"ZYMC\",\"Display\":true},{\"UniqueName\":\"Yjfx\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"Yjfx\",\"Display\":true},{\"UniqueName\":\"RXNY\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"RXNY\",\"Display\":true},{\"UniqueName\":\"ZDJS\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"ZDJS\",\"Display\":true},{\"UniqueName\":\"DSZC\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridBoundColumn\",\"ColumnGroupName\":\"\",\"Editable\":true,\"DataTypeName\":\"System.String\",\"DataField\":\"DSZC\",\"Display\":true},{\"UniqueName\":\"pslw\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridTemplateColumn\",\"ColumnGroupName\":\"\",\"Editable\":false,\"DataTypeName\":\"System.String\",\"DataField\":\"\",\"Display\":true},{\"UniqueName\":\"TemplateColumn\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridTemplateColumn\",\"ColumnGroupName\":\"\",\"Editable\":false,\"DataTypeName\":\"System.String\",\"DataField\":\"\",\"Display\":true},{\"UniqueName\":\"TemplateColumn1\",\"Resizable\":true,\"Reorderable\":true,\"Selectable\":true,\"Groupable\":true,\"ColumnType\":\"GridTemplateColumn\",\"ColumnGroupName\":\"\",\"Editable\":false,\"DataTypeName\":\"System.String\",\"DataField\":\"\",\"Display\":true}]}]","_masterClientID":"RadGrid1_ctl00","_shouldFocusOnPage":false,"_unfreezeText":"Unfreeze","allowMultiRowSelection":true,"clientStateFieldID":"RadGrid1_ClientState","expandItems":{},"renderMode":1}, {"rowDeselected":rowdeSelected,"rowSelected":rowSelected}, null, $get("RadGrid1"));
+});
+//]]>
+</script>
+</form>
+</body>
+</html>
